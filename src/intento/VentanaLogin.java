@@ -153,7 +153,7 @@ public class VentanaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearCuentaActionPerformed
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
