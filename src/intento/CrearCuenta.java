@@ -20,6 +20,21 @@ public class CrearCuenta extends javax.swing.JFrame {
      */
     public CrearCuenta() {
         initComponents();
+        cmbRol.setRenderer(new javax.swing.DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                
+                if (index == -1 && value == null) {
+                    setText("Rol"); // El texto fantasma
+                    setForeground(new java.awt.Color(153, 153, 153)); 
+                } else {
+                    setForeground(new java.awt.Color(0, 0, 0)); 
+                }
+                return this;
+            }
+        });
+        cmbRol.setSelectedIndex(-1);
     }
 
     /**
@@ -41,8 +56,13 @@ public class CrearCuenta extends javax.swing.JFrame {
         pwdConfirmarContrasena = new javax.swing.JPasswordField();
         btnGuardar = new javax.swing.JButton();
         lblVerContrasena = new javax.swing.JLabel();
+        txtPregunta = new javax.swing.JTextField();
+        lblAyudaPregunta = new javax.swing.JLabel();
+        txtRespuesta = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        pnlFondo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         lblTitulo.setFont(new java.awt.Font("Georgia", 1, 24)); // NOI18N
         lblTitulo.setText("Crear Cuenta");
@@ -82,9 +102,19 @@ public class CrearCuenta extends javax.swing.JFrame {
         });
 
         cmbRol.setBackground(new java.awt.Color(204, 204, 204));
+        cmbRol.setForeground(new java.awt.Color(153, 153, 153));
         cmbRol.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Administrador", "Vendedor", "Cliente" }));
         cmbRol.setToolTipText("");
         cmbRol.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        cmbRol.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                cmbRolFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                cmbRolFocusLost(evt);
+            }
+        });
+        cmbRol.addActionListener(this::cmbRolActionPerformed);
 
         pwdContrasena.setBackground(new java.awt.Color(204, 204, 204));
         pwdContrasena.setText("dsassasafassaf");
@@ -109,17 +139,47 @@ public class CrearCuenta extends javax.swing.JFrame {
             }
         });
 
+        txtPregunta.setBackground(new java.awt.Color(204, 204, 204));
+        txtPregunta.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtPreguntaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtPreguntaFocusLost(evt);
+            }
+        });
+        txtPregunta.addActionListener(this::txtPreguntaActionPerformed);
+
+        lblAyudaPregunta.setFont(new java.awt.Font("Times New Roman", 0, 10)); // NOI18N
+        lblAyudaPregunta.setForeground(new java.awt.Color(102, 102, 0));
+        lblAyudaPregunta.setText("En caso de que olvides tu contraseña se mostrara esta pregunta para poder recuperarla");
+
+        txtRespuesta.setBackground(new java.awt.Color(204, 204, 204));
+        txtRespuesta.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        txtRespuesta.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                txtRespuestaFocusGained(evt);
+            }
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                txtRespuestaFocusLost(evt);
+            }
+        });
+
         javax.swing.GroupLayout pnlFondoLayout = new javax.swing.GroupLayout(pnlFondo);
         pnlFondo.setLayout(pnlFondoLayout);
         pnlFondoLayout.setHorizontalGroup(
             pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlFondoLayout.createSequentialGroup()
+                .addGap(140, 140, 140)
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(pnlFondoLayout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtNombre)
                     .addComponent(txtApellido)
                     .addComponent(txtUsuario)
-                    .addComponent(cmbRol, 0, 236, Short.MAX_VALUE)
+                    .addComponent(cmbRol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pwdConfirmarContrasena)
                     .addGroup(pnlFondoLayout.createSequentialGroup()
                         .addGap(31, 31, 31)
@@ -127,12 +187,11 @@ public class CrearCuenta extends javax.swing.JFrame {
                     .addGroup(pnlFondoLayout.createSequentialGroup()
                         .addComponent(pwdContrasena)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblVerContrasena)))
+                        .addComponent(lblVerContrasena))
+                    .addComponent(txtPregunta)
+                    .addComponent(lblAyudaPregunta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(txtRespuesta))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(pnlFondoLayout.createSequentialGroup()
-                .addGap(141, 141, 141)
-                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(181, Short.MAX_VALUE))
         );
         pnlFondoLayout.setVerticalGroup(
             pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -153,8 +212,14 @@ public class CrearCuenta extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(pwdConfirmarContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
+                .addComponent(txtPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblAyudaPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtRespuesta, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(15, Short.MAX_VALUE))
+                .addGap(19, 19, 19))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -162,8 +227,9 @@ public class CrearCuenta extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(pnlFondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -229,7 +295,7 @@ public class CrearCuenta extends javax.swing.JFrame {
         }
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioFocusLost
-
+ 
     private void lblVerContrasenaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblVerContrasenaMouseClicked
         if (passVisible) {
             pwdContrasena.setEchoChar('•'); // Ocultar
@@ -240,6 +306,57 @@ public class CrearCuenta extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_lblVerContrasenaMouseClicked
+
+    private void cmbRolFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cmbRolFocusGained
+    
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbRolFocusGained
+
+    private void cmbRolFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cmbRolFocusLost
+    
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbRolFocusLost
+
+    private void txtPreguntaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPreguntaFocusGained
+    if (txtPregunta.getText().equals("Ingresa una pregunta")) {
+            txtPregunta.setText("");
+            txtPregunta.setForeground(new java.awt.Color(0, 0, 0));
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPreguntaFocusGained
+
+    private void txtPreguntaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPreguntaFocusLost
+    if (txtPregunta.getText().isEmpty()) {
+            txtPregunta.setForeground(new java.awt.Color(153, 153, 153));
+            txtPregunta.setText("Ingresa una pregunta");
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPreguntaFocusLost
+
+    private void txtRespuestaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRespuestaFocusGained
+    if (txtRespuesta.getText().equals("Ingresa la respuesta a tu pregunta")) {
+            txtRespuesta.setText("");
+            txtRespuesta.setForeground(new java.awt.Color(0, 0, 0));
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtRespuestaFocusGained
+
+    private void txtRespuestaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRespuestaFocusLost
+    if (txtRespuesta.getText().isEmpty()) {
+            txtRespuesta.setForeground(new java.awt.Color(153, 153, 153));
+            txtRespuesta.setText("Ingresa la respuesta a tu pregunta");
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtRespuestaFocusLost
+
+    private void txtPreguntaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPreguntaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPreguntaActionPerformed
+
+    private void cmbRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbRolActionPerformed
+   
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbRolActionPerformed
 
     /**
      * @param args the command line arguments
@@ -269,6 +386,7 @@ public class CrearCuenta extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
     private javax.swing.JComboBox<String> cmbRol;
+    private javax.swing.JLabel lblAyudaPregunta;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblVerContrasena;
     private javax.swing.JPanel pnlFondo;
@@ -276,6 +394,8 @@ public class CrearCuenta extends javax.swing.JFrame {
     private javax.swing.JPasswordField pwdContrasena;
     private javax.swing.JTextField txtApellido;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtPregunta;
+    private javax.swing.JTextField txtRespuesta;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }
