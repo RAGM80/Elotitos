@@ -182,7 +182,7 @@
                                   <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                               </Group>
                               <Group type="102" alignment="1" attributes="0">
-                                  <Group type="103" groupAlignment="3" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="lblImagen2" alignment="1" min="-2" pref="61" max="-2" attributes="0"/>
                                       <Component id="lblImagen3" alignment="1" min="-2" pref="61" max="-2" attributes="0"/>
                                   </Group>
@@ -235,10 +235,10 @@
                                   <EmptySpace max="32767" attributes="0"/>
                               </Group>
                           </Group>
-                          <Group type="103" groupAlignment="3" attributes="0">
+                          <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="lblImagen6" alignment="1" min="-2" pref="61" max="-2" attributes="0"/>
                               <Component id="lblImagen5" alignment="1" min="-2" pref="61" max="-2" attributes="0"/>
-                              <Component id="lblImagen4" alignment="3" min="-2" pref="61" max="-2" attributes="0"/>
+                              <Component id="lblImagen4" min="-2" pref="61" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
