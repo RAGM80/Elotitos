@@ -20,13 +20,14 @@ public class CrearCuenta extends javax.swing.JFrame {
      */
     public CrearCuenta() {
         initComponents();
+        this.setLocationRelativeTo(null);
         cmbRol.setRenderer(new javax.swing.DefaultListCellRenderer() {
             @Override
             public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
                 super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 
                 if (index == -1 && value == null) {
-                    setText("Rol"); // El texto fantasma
+                    setText("Rol"); 
                     setForeground(new java.awt.Color(153, 153, 153)); 
                 } else {
                     setForeground(new java.awt.Color(0, 0, 0)); 

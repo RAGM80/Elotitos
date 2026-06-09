@@ -17,6 +17,7 @@ public class VentanaLogin extends javax.swing.JFrame {
      */
     public VentanaLogin() {
         initComponents();
+        this.setLocationRelativeTo(null);
     }
 
     /**
@@ -78,6 +79,11 @@ public class VentanaLogin extends javax.swing.JFrame {
         lblOlvideContrasena.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         lblOlvideContrasena.setForeground(new java.awt.Color(51, 51, 255));
         lblOlvideContrasena.setText("olvide mi contraseña");
+        lblOlvideContrasena.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblOlvideContrasenaMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout panPrincipalLayout = new javax.swing.GroupLayout(panPrincipal);
         panPrincipal.setLayout(panPrincipalLayout);
@@ -159,6 +165,13 @@ public class VentanaLogin extends javax.swing.JFrame {
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioActionPerformed
+
+    private void lblOlvideContrasenaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblOlvideContrasenaMouseClicked
+    VentanaRecuperar paso1 = new VentanaRecuperar();
+    paso1.setVisible(true);
+    this.dispose();  
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lblOlvideContrasenaMouseClicked
 
     /**
      * @param args the command line arguments
