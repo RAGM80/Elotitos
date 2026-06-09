@@ -1,4 +1,8 @@
 package intento;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -19,23 +23,29 @@ public class CrearCuenta extends javax.swing.JFrame {
      * Creates new form CrearCuenta
      */
     public CrearCuenta() {
-        initComponents();
-        this.setLocationRelativeTo(null);
-        cmbRol.setRenderer(new javax.swing.DefaultListCellRenderer() {
-            @Override
-            public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                
-                if (index == -1 && value == null) {
-                    setText("Rol"); 
-                    setForeground(new java.awt.Color(153, 153, 153)); 
-                } else {
-                    setForeground(new java.awt.Color(0, 0, 0)); 
-                }
-                return this;
+    initComponents();
+    this.setLocationRelativeTo(null);
+    pwdContrasena.setText("");
+    pwdConfirmarContrasena.setText("");
+    txtPregunta.setText("Ingresa una pregunta");
+    txtPregunta.setForeground(new java.awt.Color(153, 153, 153));
+    txtRespuesta.setText("Ingresa la respuesta a tu pregunta");
+    txtRespuesta.setForeground(new java.awt.Color(153, 153, 153));
+
+    cmbRol.setRenderer(new javax.swing.DefaultListCellRenderer() {
+        @Override
+        public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            if (index == -1 && value == null) {
+                setText("Rol"); 
+                setForeground(new java.awt.Color(153, 153, 153)); 
+            } else {
+                setForeground(new java.awt.Color(0, 0, 0)); 
             }
-        });
-        cmbRol.setSelectedIndex(-1);
+            return this;
+        }
+    });
+    cmbRol.setSelectedIndex(-1);
     }
 
     /**
@@ -132,8 +142,8 @@ public class CrearCuenta extends javax.swing.JFrame {
         btnGuardar.setText("Guardar");
         btnGuardar.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnGuardar.setFocusPainted(false);
+        btnGuardar.addActionListener(this::btnGuardarActionPerformed);
 
-        lblVerContrasena.setIcon(new javax.swing.ImageIcon("C:\\Users\\rafhi\\Downloads\\pngwing.com.png")); // NOI18N
         lblVerContrasena.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblVerContrasenaMouseClicked(evt);
@@ -239,7 +249,71 @@ public class CrearCuenta extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    void insertarDatos() {
+        ConexionMySQL cmysql = new ConexionMySQL();
+        Connection conec = cmysql.Conectar();
+        
+        if (conec == null) {
+            return;
+        }
+        String nombreReal = this.txtNombre.getText().trim();
+        String apellidoReal = this.txtApellido.getText().trim();
+        String user = this.txtUsuario.getText().trim();
+        String pass = new String(this.pwdContrasena.getPassword()).trim();
+        String confirmPass = new String(this.pwdConfirmarContrasena.getPassword()).trim();
+        String pregunta = this.txtPregunta.getText().trim();
+        String respuesta = this.txtRespuesta.getText().trim();
+        if (this.cmbRol.getSelectedIndex() == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecciona un Rol.");
+            return;
+        }
+        String rol = this.cmbRol.getSelectedItem().toString();
+        if (user.isEmpty() || user.equals("Usuario") || pass.isEmpty() || 
+            pregunta.isEmpty() || pregunta.equals("Ingresa una pregunta") || 
+            respuesta.isEmpty() || respuesta.equals("Ingresa la respuesta a tu pregunta")) {
+            JOptionPane.showMessageDialog(this, "Por favor, llena todos los campos obligatorios.");
+            return;
+        }
+        
+        if (!pass.equals(confirmPass)) {
+            JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden.");
+            return;
+        }
+        
+        // Sentencia SQL apuntando a tu estructura real actualizada
+        String senSQL = "INSERT INTO usuarios(Usuario, Contrasena, Rol, Estado, Pregunta_Seguridad, Respuesta_Seguridad, Nombre, Apellido) VALUES (?, ?, ?, 'Activo', ?, ?, ?, ?)";
+        String comprobacion = "¡Se han guardado tus datos correctamente en MySQL Workbench!";
+        
+        try {
+            PreparedStatement ps = conec.prepareStatement(senSQL);
+            ps.setString(1, user);
+            ps.setString(2, pass);
+            ps.setString(3, rol);
+            ps.setString(4, pregunta);
+            ps.setString(5, respuesta);
+            ps.setString(6, nombreReal);
+            ps.setString(7, apellidoReal);
+            
+            int n = ps.executeUpdate();
+            if (n > 0) {
+                JOptionPane.showOptionDialog(this, comprobacion, "MySQL INFORMATION", JOptionPane.INFORMATION_MESSAGE,
+                        JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"ok"}, "ok");
+                
+                // Redirigir de inmediato al Login para que cales tu cuenta recién creada
+                VentanaLogin login = new VentanaLogin();
+                login.setVisible(true);
+                this.dispose(); 
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Error al insertar: " + ex.getMessage());
+        } finally {
+            try {
+                if (conec != null) conec.close();
+            } catch (SQLException e) {
+                System.out.println("Error al cerrar: " + e.getMessage());
+            }
+        }
+    }
     private void pwdConfirmarContrasenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pwdConfirmarContrasenaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_pwdConfirmarContrasenaActionPerformed
@@ -359,6 +433,10 @@ public class CrearCuenta extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_cmbRolActionPerformed
 
+    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
+    insertarDatos();
+    }//GEN-LAST:event_btnGuardarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -383,7 +461,6 @@ public class CrearCuenta extends javax.swing.JFrame {
     /* Create and display the form */
     java.awt.EventQueue.invokeLater(() -> new CrearCuenta().setVisible(true));
 }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
     private javax.swing.JComboBox<String> cmbRol;

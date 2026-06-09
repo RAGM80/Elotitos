@@ -3,6 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package intento;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -159,7 +164,48 @@ public class VentanaLogin extends javax.swing.JFrame {
     }//GEN-LAST:event_btnCrearCuentaActionPerformed
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
-
+    String userText = txtUsuario.getText().trim();
+    String passText = txtContrasena.getText().trim(); 
+    if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
+        passText.isEmpty() || passText.equals("ingresa tu contraseña")) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingresa tus datos de acceso.");
+        return;
+    }
+    ConexionMySQL mysql = new ConexionMySQL();
+    Connection con = mysql.Conectar();
+    
+    if (con == null) {
+        return; 
+    }
+    String sql = "SELECT Estado FROM usuarios WHERE Usuario = ? AND Contrasena = ?";
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setString(1, userText);
+        pst.setString(2, passText);
+        
+        try (ResultSet rs = pst.executeQuery()) {
+        if (rs.next()) {
+        String estado = rs.getString("Estado");
+        if (estado.equalsIgnoreCase("Activo")) {
+        JOptionPane.showMessageDialog(this, "¡Conexión Exitosa!\nBienvenido al sistema, " + userText);
+        VentanaProductos tienda = new VentanaProductos();
+        tienda.setVisible(true);
+        this.dispose(); 
+        } else {
+        JOptionPane.showMessageDialog(this, "Esta cuenta se encuentra inactiva.");
+        }
+        } else {
+        JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos. Intenta de nuevo.");
+        }
+        }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error en la base de datos: " + e.getMessage());
+    } finally {
+        try {
+            if (con != null) con.close(); 
+        } catch (SQLException ex) {
+            System.out.println("Error al cerrar conexión: " + ex.getMessage());
+        }
+    }
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
