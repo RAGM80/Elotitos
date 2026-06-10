@@ -63,6 +63,7 @@ public void cargarProductosAlCarrito() {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -80,7 +81,7 @@ public void cargarProductosAlCarrito() {
         panelContenedor.setLayout(new javax.swing.BoxLayout(panelContenedor, javax.swing.BoxLayout.Y_AXIS));
         jScrollPane1.setViewportView(panelContenedor);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 150, 410, 270));
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 150, 450, 270));
 
         btnProductos.setBackground(new java.awt.Color(204, 204, 204));
         btnProductos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
@@ -123,6 +124,11 @@ public void cargarProductosAlCarrito() {
 
         jLabel9.setText("$ 00.00");
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 190, -1, -1));
+
+        jButton1.setBackground(new java.awt.Color(51, 51, 255));
+        jButton1.setForeground(new java.awt.Color(255, 255, 255));
+        jButton1.setText("Realizar Pedido");
+        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, -1, -1));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 140, 190, 280));
 
@@ -179,6 +185,7 @@ public void cargarProductosAlCarrito() {
     private javax.swing.JButton btnProductos;
     private javax.swing.JButton btnProductos1;
     private javax.swing.JButton btnProductos2;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
