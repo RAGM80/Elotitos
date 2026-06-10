@@ -3,6 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package intento;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -10,18 +15,27 @@ package intento;
  */
 public class VentanaRecuperar3_Exito extends javax.swing.JFrame {
     boolean passVisible = false;
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRecuperar3_Exito.class.getName());
+    private String passwordReal; 
+    private static final java.util.logging.Logger logger = 
+    java.util.logging.Logger.getLogger(VentanaRecuperar3_Exito.class.getName());
 
     /**
      * Creates new form VentanaRecuperar3_Exito
      */
     public VentanaRecuperar3_Exito() {
         initComponents();
-        this.setLocationRelativeTo(null);
+    this.setLocationRelativeTo(null);
+}
+
+public VentanaRecuperar3_Exito(String contrasena) {
+    this.passwordReal = contrasena;
+    initComponents();
+    this.setLocationRelativeTo(null);
+    pwdContraseña.setText("");          
+    pwdContraseña.setText(passwordReal); 
+    pwdContraseña.setEditable(false);
     }
 public void mostrarContrasenaRecuperada(String passwordReal) {
-        pwdContraseña.setText(passwordReal);
-        pwdContraseña.setEditable(false); 
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,7 +57,7 @@ public void mostrarContrasenaRecuperada(String passwordReal) {
         jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
         jLabel1.setText("Esta es tu contraseña");
 
-        pwdContraseña.setText("jPasswordField1");
+        pwdContraseña.addActionListener(this::pwdContraseñaActionPerformed);
 
         btnRegresarLogin.setBackground(new java.awt.Color(51, 102, 255));
         btnRegresarLogin.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
@@ -120,11 +134,13 @@ public void mostrarContrasenaRecuperada(String passwordReal) {
 
     private void btnRegresarLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarLoginActionPerformed
     VentanaLogin login = new VentanaLogin();
-    login.setVisible(true);
-    this.dispose();
-    
-    // TODO add your handling code here:
+        login.setVisible(true);
+        this.dispose();
     }//GEN-LAST:event_btnRegresarLoginActionPerformed
+
+    private void pwdContraseñaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pwdContraseñaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pwdContraseñaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -148,7 +164,7 @@ public void mostrarContrasenaRecuperada(String passwordReal) {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new VentanaRecuperar3_Exito().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new VentanaRecuperar3_Exito("test").setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

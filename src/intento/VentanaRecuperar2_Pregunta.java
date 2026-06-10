@@ -3,7 +3,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package intento;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
+
 
 /**
  *
@@ -105,15 +110,45 @@ public void configurarDatos(String usuario, String preguntaBD) {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-   String respuestaText = jTextField1.getText().trim();
-    if (respuestaText.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "Por favor, ingresa la respuesta a tu pregunta de seguridad para continuar.", "Campo vacío", JOptionPane.WARNING_MESSAGE);
-        return; 
-    }
-    VentanaRecuperar3_Exito paso3 = new VentanaRecuperar3_Exito();
-    paso3.setVisible(true);
-    this.dispose(); 
+ String respuestaText = jTextField1.getText().trim();
 
+if (respuestaText.isEmpty()) {
+    JOptionPane.showMessageDialog(this, "Por favor, ingresa la respuesta a tu pregunta de seguridad para continuar.", "Campo vacío", JOptionPane.WARNING_MESSAGE);
+    return; 
+} 
+
+ConexionMySQL mysql = new ConexionMySQL();
+java.sql.Connection con = mysql.Conectar();
+
+if (con == null) return;
+String sql = "SELECT Contrasena, Respuesta_Seguridad FROM usuarios WHERE Usuario = ?";
+
+try (java.sql.PreparedStatement pst = con.prepareStatement(sql)) {
+    pst.setString(1, usuarioActual);
+    
+    try (java.sql.ResultSet rs = pst.executeQuery()) {
+        if (rs.next()) {
+            String respuestaBD = rs.getString("Respuesta_Seguridad");
+            String contrasenaBD = rs.getString("Contrasena");
+            
+            if (respuestaText.equalsIgnoreCase(respuestaBD)) {
+                        VentanaRecuperar3_Exito paso3 = new VentanaRecuperar3_Exito(contrasenaBD); 
+                        paso3.setVisible(true);
+                        this.dispose(); 
+            } else {
+                JOptionPane.showMessageDialog(this, "La respuesta es incorrecta. Intenta de nuevo.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+} catch (java.sql.SQLException e) {
+    JOptionPane.showMessageDialog(this, "Error en la base de datos: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+} finally {
+    try {
+        if (con != null) con.close(); 
+    } catch (java.sql.SQLException ex) {
+        System.out.println("Error al cerrar conexión: " + ex.getMessage());
+    }
+}
     }//GEN-LAST:event_btnAceptarActionPerformed
 
     /**

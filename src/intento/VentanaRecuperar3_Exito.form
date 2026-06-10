@@ -90,9 +90,9 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JPasswordField" name="pwdContrase&#xf1;a">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="jPasswordField1"/>
-          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pwdContrase&#xf1;aActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnRegresarLogin">
           <Properties>
