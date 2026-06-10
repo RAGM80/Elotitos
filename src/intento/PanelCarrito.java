@@ -45,9 +45,13 @@ public class PanelCarrito extends javax.swing.JPanel {
 
         lblCantidad.setText("0");
 
+        btnSum.setBackground(new java.awt.Color(51, 153, 255));
+        btnSum.setForeground(new java.awt.Color(255, 255, 255));
         btnSum.setText("+");
         btnSum.addActionListener(this::btnSumActionPerformed);
 
+        btnRes.setBackground(new java.awt.Color(255, 51, 51));
+        btnRes.setForeground(new java.awt.Color(255, 255, 255));
         btnRes.setText("-");
         btnRes.addActionListener(this::btnResActionPerformed);
 
@@ -67,18 +71,15 @@ public class PanelCarrito extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3))
+                .addGap(29, 29, 29)
+                .addComponent(btnRes)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(63, 63, 63)
-                        .addComponent(lblPrecioTotal))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(28, 28, 28)
-                        .addComponent(btnSum)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnRes)))
-                .addGap(17, 17, 17)
+                    .addComponent(lblPrecioTotal)
+                    .addComponent(btnSum))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton3))
         );
         layout.setVerticalGroup(
@@ -95,15 +96,15 @@ public class PanelCarrito extends javax.swing.JPanel {
                         .addComponent(jLabel3))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(80, 80, 80)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnRes)
-                            .addComponent(lblCantidad)
-                            .addComponent(btnSum))
+                        .addComponent(btnRes)
                         .addGap(17, 17, 17)
                         .addComponent(lblPrecioTotal))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(80, 80, 80)
-                        .addComponent(jButton3)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton3)
+                            .addComponent(btnSum)
+                            .addComponent(lblCantidad))))
                 .addGap(14, 14, 14))
         );
     }// </editor-fold>//GEN-END:initComponents
