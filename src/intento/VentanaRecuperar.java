@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package intento;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -126,10 +127,46 @@ public class VentanaRecuperar extends javax.swing.JFrame {
     }//GEN-LAST:event_txtUsuarioFocusLost
 
     private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
-    VentanaRecuperar2_Pregunta paso2 = new VentanaRecuperar2_Pregunta();
-    paso2.setVisible(true);
-    this.dispose(); // Cierra el Paso 1
-        // TODO add your handling code here:
+   String userText = txtUsuario.getText().trim();
+    
+    if (userText.isEmpty() || userText.equals("Usuario")) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingresa tu nombre de usuario para continuar.", "Campo vacío", JOptionPane.WARNING_MESSAGE);
+        return; 
+    }
+    ConexionMySQL mysql = new ConexionMySQL();
+    java.sql.Connection con = mysql.Conectar(); //
+    
+    if (con == null) return;
+    String sql = "SELECT Pregunta_Seguridad FROM usuarios WHERE Usuario = ?";
+    
+    try (java.sql.PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setString(1, userText);
+        
+        try (java.sql.ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+               
+                String preguntaDB = rs.getString("Pregunta_Seguridad");
+                
+                
+                VentanaRecuperar2_Pregunta paso2 = new VentanaRecuperar2_Pregunta();
+                paso2.configurarDatos(userText, preguntaDB); // Llamamos al método que creamos arriba
+                paso2.setVisible(true);
+                this.dispose(); 
+                
+            } else {
+                
+                JOptionPane.showMessageDialog(this, "El usuario ingresado no existe en el sistema.", "Usuario no encontrado", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    } catch (java.sql.SQLException e) {
+        JOptionPane.showMessageDialog(this, "Error en la base de datos: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
+    } finally {
+        try {
+            if (con != null) con.close(); 
+        } catch (java.sql.SQLException ex) {
+            System.out.println("Error al cerrar conexión: " + ex.getMessage());
+        }
+    }
     }//GEN-LAST:event_btnSiguienteActionPerformed
 
     /**

@@ -25,27 +25,40 @@ public class CrearCuenta extends javax.swing.JFrame {
     public CrearCuenta() {
     initComponents();
     this.setLocationRelativeTo(null);
-    pwdContrasena.setText("");
-    pwdConfirmarContrasena.setText("");
-    txtPregunta.setText("Ingresa una pregunta");
-    txtPregunta.setForeground(new java.awt.Color(153, 153, 153));
-    txtRespuesta.setText("Ingresa la respuesta a tu pregunta");
-    txtRespuesta.setForeground(new java.awt.Color(153, 153, 153));
+    txtNombre.setText("Nombre");
+        txtNombre.setForeground(new java.awt.Color(153, 153, 153));
 
-    cmbRol.setRenderer(new javax.swing.DefaultListCellRenderer() {
-        @Override
-        public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-            super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            if (index == -1 && value == null) {
-                setText("Rol"); 
-                setForeground(new java.awt.Color(153, 153, 153)); 
-            } else {
-                setForeground(new java.awt.Color(0, 0, 0)); 
+        txtApellido.setText("Apellidos");
+        txtApellido.setForeground(new java.awt.Color(153, 153, 153));
+
+        txtUsuario.setText("Usuario");
+        txtUsuario.setForeground(new java.awt.Color(153, 153, 153));
+
+        txtPregunta.setText("Ingresa una pregunta");
+        txtPregunta.setForeground(new java.awt.Color(153, 153, 153));
+
+        txtRespuesta.setText("Ingresa la respuesta a tu pregunta");
+        txtRespuesta.setForeground(new java.awt.Color(153, 153, 153));
+
+       
+
+        cmbRol.setRenderer(new javax.swing.DefaultListCellRenderer() {
+            @Override
+            public java.awt.Component getListCellRendererComponent(javax.swing.JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                if (index == -1 && value == null) {
+                    setText("Rol"); 
+                    setForeground(new java.awt.Color(153, 153, 153)); 
+                } else {
+                    setForeground(new java.awt.Color(0, 0, 0)); 
+                }
+                return this;
             }
-            return this;
-        }
-    });
-    cmbRol.setSelectedIndex(-1);
+        });
+        cmbRol.setSelectedIndex(-1);
+        
+       
+        pnlFondo.requestFocus();
     }
 
     /**
@@ -73,6 +86,7 @@ public class CrearCuenta extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        pnlFondo.setBackground(new java.awt.Color(255, 255, 255));
         pnlFondo.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         lblTitulo.setFont(new java.awt.Font("Georgia", 1, 24)); // NOI18N
@@ -137,13 +151,14 @@ public class CrearCuenta extends javax.swing.JFrame {
         pwdConfirmarContrasena.addActionListener(this::pwdConfirmarContrasenaActionPerformed);
 
         btnGuardar.setBackground(new java.awt.Color(0, 102, 255));
-        btnGuardar.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        btnGuardar.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
         btnGuardar.setForeground(new java.awt.Color(255, 255, 255));
         btnGuardar.setText("Guardar");
         btnGuardar.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(this::btnGuardarActionPerformed);
 
+        lblVerContrasena.setIcon(new javax.swing.ImageIcon(getClass().getResource("/intento/pngwing.com.png"))); // NOI18N
         lblVerContrasena.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblVerContrasenaMouseClicked(evt);
@@ -181,27 +196,30 @@ public class CrearCuenta extends javax.swing.JFrame {
         pnlFondoLayout.setHorizontalGroup(
             pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(pnlFondoLayout.createSequentialGroup()
-                .addGap(140, 140, 140)
-                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(pnlFondoLayout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addGroup(pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtNombre)
-                    .addComponent(txtApellido)
-                    .addComponent(txtUsuario)
-                    .addComponent(cmbRol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(pwdConfirmarContrasena)
-                    .addGroup(pnlFondoLayout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 23, Short.MAX_VALUE)
+                .addGroup(pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlFondoLayout.createSequentialGroup()
                         .addComponent(pwdContrasena)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblVerContrasena))
-                    .addComponent(txtPregunta)
-                    .addComponent(lblAyudaPregunta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(txtRespuesta))
+                        .addComponent(lblVerContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(45, 45, 45))
+                    .addGroup(pnlFondoLayout.createSequentialGroup()
+                        .addGroup(pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txtNombre)
+                            .addComponent(txtApellido)
+                            .addComponent(txtUsuario)
+                            .addComponent(cmbRol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(pwdConfirmarContrasena)
+                            .addGroup(pnlFondoLayout.createSequentialGroup()
+                                .addGap(31, 31, 31)
+                                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtPregunta)
+                            .addComponent(lblAyudaPregunta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(txtRespuesta))
+                        .addContainerGap(34, Short.MAX_VALUE))))
+            .addGroup(pnlFondoLayout.createSequentialGroup()
+                .addGap(129, 129, 129)
+                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlFondoLayout.setVerticalGroup(
@@ -228,9 +246,9 @@ public class CrearCuenta extends javax.swing.JFrame {
                 .addComponent(lblAyudaPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtRespuesta, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
                 .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(19, 19, 19))
+                .addGap(25, 25, 25))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -239,8 +257,7 @@ public class CrearCuenta extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(pnlFondo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(pnlFondo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -280,7 +297,7 @@ public class CrearCuenta extends javax.swing.JFrame {
             return;
         }
         
-        // Sentencia SQL apuntando a tu estructura real actualizada
+        
         String senSQL = "INSERT INTO usuarios(Usuario, Contrasena, Rol, Estado, Pregunta_Seguridad, Respuesta_Seguridad, Nombre, Apellido) VALUES (?, ?, ?, 'Activo', ?, ?, ?, ?)";
         String comprobacion = "¡Se han guardado tus datos correctamente en MySQL Workbench!";
         
@@ -340,7 +357,7 @@ public class CrearCuenta extends javax.swing.JFrame {
     }//GEN-LAST:event_txtNombreFocusLost
 
     private void txtApellidoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoFocusGained
-       if (txtApellido.getText().equals("Apellido")) {
+       if (txtApellido.getText().equals("Apellidos")) {
             txtApellido.setText("");
             txtApellido.setForeground(new java.awt.Color(0, 0, 0));
         }
@@ -350,9 +367,8 @@ public class CrearCuenta extends javax.swing.JFrame {
     private void txtApellidoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoFocusLost
         if (txtApellido.getText().isEmpty()) {
             txtApellido.setForeground(new java.awt.Color(153, 153, 153));
-            txtApellido.setText("Apellido");
-        }
-        // TODO add your handling code here:
+            txtApellido.setText("Apellidos");
+        }        // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoFocusLost
 
     private void txtUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUsuarioFocusGained
@@ -435,6 +451,8 @@ public class CrearCuenta extends javax.swing.JFrame {
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
     insertarDatos();
+    // 1. Obtener los datos de los campos de texto (Ajusta los nombres de tus variables si cambian)
+   
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     /**

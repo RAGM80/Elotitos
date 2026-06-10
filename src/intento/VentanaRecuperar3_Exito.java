@@ -19,7 +19,10 @@ public class VentanaRecuperar3_Exito extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
     }
-
+public void mostrarContrasenaRecuperada(String passwordReal) {
+        pwdContraseña.setText(passwordReal);
+        pwdContraseña.setEditable(false); 
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -119,7 +122,8 @@ public class VentanaRecuperar3_Exito extends javax.swing.JFrame {
     VentanaLogin login = new VentanaLogin();
     login.setVisible(true);
     this.dispose();
-        // TODO add your handling code here:
+    
+    // TODO add your handling code here:
     }//GEN-LAST:event_btnRegresarLoginActionPerformed
 
     /**

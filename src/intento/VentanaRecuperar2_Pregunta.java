@@ -3,13 +3,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package intento;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author rafhi
  */
 public class VentanaRecuperar2_Pregunta extends javax.swing.JFrame {
-    
+public String usuarioActual = "";   
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRecuperar2_Pregunta.class.getName());
 
     /**
@@ -19,7 +20,11 @@ public class VentanaRecuperar2_Pregunta extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
     }
-
+public void configurarDatos(String usuario, String preguntaBD) {
+        this.usuarioActual = usuario;
+        // Aquí reemplazamos el "xd" por la pregunta que viene de la base de datos
+        txtRespuesta.setText(preguntaBD); 
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -37,7 +42,6 @@ public class VentanaRecuperar2_Pregunta extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         txtRespuesta.setFont(new java.awt.Font("Times New Roman", 1, 24)); // NOI18N
-        txtRespuesta.setText("xd");
 
         jTextField1.setBackground(new java.awt.Color(204, 204, 204));
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
@@ -101,10 +105,15 @@ public class VentanaRecuperar2_Pregunta extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField1ActionPerformed
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-   VentanaRecuperar3_Exito paso3 = new VentanaRecuperar3_Exito();
-   paso3.setVisible(true);
-   this.dispose(); 
-        // TODO add your handling code here:
+   String respuestaText = jTextField1.getText().trim();
+    if (respuestaText.isEmpty()) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingresa la respuesta a tu pregunta de seguridad para continuar.", "Campo vacío", JOptionPane.WARNING_MESSAGE);
+        return; 
+    }
+    VentanaRecuperar3_Exito paso3 = new VentanaRecuperar3_Exito();
+    paso3.setVisible(true);
+    this.dispose(); 
+
     }//GEN-LAST:event_btnAceptarActionPerformed
 
     /**
