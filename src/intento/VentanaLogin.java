@@ -14,7 +14,7 @@ import javax.swing.JOptionPane;
  * @author Limon
  */
 public class VentanaLogin extends javax.swing.JFrame {
-    
+boolean passVisible = false;    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaLogin.class.getName());
 
     /**
@@ -38,11 +38,12 @@ public class VentanaLogin extends javax.swing.JFrame {
         lblTitulo = new javax.swing.JLabel();
         lblSubtitulo = new javax.swing.JLabel();
         txtUsuario = new javax.swing.JTextField();
-        txtContrasena = new javax.swing.JTextField();
         btnCrearCuenta = new javax.swing.JButton();
         btnIniciarSesion = new javax.swing.JButton();
         lblOlvideUsuario = new javax.swing.JLabel();
         lblOlvideContrasena = new javax.swing.JLabel();
+        lblVerContra = new javax.swing.JLabel();
+        pwdContraseña1 = new javax.swing.JPasswordField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -60,11 +61,6 @@ public class VentanaLogin extends javax.swing.JFrame {
         txtUsuario.setForeground(new java.awt.Color(153, 153, 153));
         txtUsuario.setText("ingresa tu usuario");
         txtUsuario.addActionListener(this::txtUsuarioActionPerformed);
-
-        txtContrasena.setBackground(new java.awt.Color(221, 221, 221));
-        txtContrasena.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        txtContrasena.setForeground(new java.awt.Color(153, 153, 153));
-        txtContrasena.setText("ingresa tu contraseña");
 
         btnCrearCuenta.setBackground(new java.awt.Color(204, 204, 204));
         btnCrearCuenta.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
@@ -90,6 +86,15 @@ public class VentanaLogin extends javax.swing.JFrame {
             }
         });
 
+        lblVerContra.setIcon(new javax.swing.ImageIcon(getClass().getResource("/intento/pngwing.com.png"))); // NOI18N
+        lblVerContra.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblVerContraMouseClicked(evt);
+            }
+        });
+
+        pwdContraseña1.setBackground(new java.awt.Color(204, 204, 204));
+
         javax.swing.GroupLayout panPrincipalLayout = new javax.swing.GroupLayout(panPrincipal);
         panPrincipal.setLayout(panPrincipalLayout);
         panPrincipalLayout.setHorizontalGroup(
@@ -103,18 +108,21 @@ public class VentanaLogin extends javax.swing.JFrame {
                     .addGroup(panPrincipalLayout.createSequentialGroup()
                         .addGap(56, 56, 56)
                         .addComponent(lblTitulo))
-                    .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 268, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(panPrincipalLayout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addGroup(panPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(btnCrearCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnIniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panPrincipalLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addGroup(panPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblOlvideUsuario)
                             .addComponent(lblOlvideContrasena)))
                     .addGroup(panPrincipalLayout.createSequentialGroup()
-                        .addGap(26, 26, 26)
-                        .addGroup(panPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnCrearCuenta, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnIniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addComponent(pwdContraseña1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblVerContra)))
                 .addContainerGap(62, Short.MAX_VALUE))
         );
         panPrincipalLayout.setVerticalGroup(
@@ -128,9 +136,11 @@ public class VentanaLogin extends javax.swing.JFrame {
                 .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblOlvideUsuario)
-                .addGap(26, 26, 26)
-                .addComponent(txtContrasena, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
+                .addGroup(panPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(pwdContraseña1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblVerContra, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(17, 17, 17)
                 .addComponent(lblOlvideContrasena)
                 .addGap(20, 20, 20)
                 .addComponent(btnIniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -160,12 +170,15 @@ public class VentanaLogin extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCrearCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearCuentaActionPerformed
+    CrearCuenta ventanaRegistro = new CrearCuenta();
+    ventanaRegistro.setVisible(true);
+    this.dispose();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnCrearCuentaActionPerformed
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
     String userText = txtUsuario.getText().trim();
-    String passText = txtContrasena.getText().trim(); 
+    String passText = pwdContraseña1.getText().trim(); 
     if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
         passText.isEmpty() || passText.equals("ingresa tu contraseña")) {
         JOptionPane.showMessageDialog(this, "Por favor, ingresa tus datos de acceso.");
@@ -219,6 +232,17 @@ public class VentanaLogin extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_lblOlvideContrasenaMouseClicked
 
+    private void lblVerContraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblVerContraMouseClicked
+    if (passVisible) {
+            pwdContraseña1.setEchoChar('•'); 
+            passVisible = false;
+        } else {
+            pwdContraseña1.setEchoChar((char) 0);
+            passVisible = true;
+        }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_lblVerContraMouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -251,8 +275,9 @@ public class VentanaLogin extends javax.swing.JFrame {
     private javax.swing.JLabel lblOlvideUsuario;
     private javax.swing.JLabel lblSubtitulo;
     private javax.swing.JLabel lblTitulo;
+    private javax.swing.JLabel lblVerContra;
     private javax.swing.JPanel panPrincipal;
-    private javax.swing.JTextField txtContrasena;
+    private javax.swing.JPasswordField pwdContraseña1;
     private javax.swing.JTextField txtUsuario;
     // End of variables declaration//GEN-END:variables
 }
