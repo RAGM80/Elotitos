@@ -19,6 +19,11 @@ public class VentanaRecuperar extends javax.swing.JFrame {
     public VentanaRecuperar() {
         initComponents();
         this.setLocationRelativeTo(null);
+        txtUsuario.setText("Usuario");
+        txtUsuario.setForeground(new java.awt.Color(153, 153, 153));
+        jPanel1.setFocusable(true);
+        jPanel1.requestFocus();
+        
     }
 
     /**

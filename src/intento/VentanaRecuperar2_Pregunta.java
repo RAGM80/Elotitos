@@ -27,7 +27,6 @@ public String usuarioActual = "";
     }
 public void configurarDatos(String usuario, String preguntaBD) {
         this.usuarioActual = usuario;
-        // Aquí reemplazamos el "xd" por la pregunta que viene de la base de datos
         txtRespuesta.setText(preguntaBD); 
     }
     /**

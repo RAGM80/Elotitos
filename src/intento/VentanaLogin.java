@@ -23,6 +23,24 @@ boolean passVisible = false;
     public VentanaLogin() {
         initComponents();
         this.setLocationRelativeTo(null);
+        txtUsuario.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                if (txtUsuario.getText().equals("ingresa tu usuario")) {
+                    txtUsuario.setText("");
+                    txtUsuario.setForeground(new java.awt.Color(0, 0, 0)); 
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                if (txtUsuario.getText().isEmpty()) {
+                    txtUsuario.setForeground(new java.awt.Color(153, 153, 153)); 
+                    txtUsuario.setText("ingresa tu usuario");
+                }
+            }
+        });
+        panPrincipal.requestFocus();
     }
 
     /**

@@ -299,7 +299,7 @@ public class CrearCuenta extends javax.swing.JFrame {
         
         
         String senSQL = "INSERT INTO usuarios(Usuario, Contrasena, Rol, Estado, Pregunta_Seguridad, Respuesta_Seguridad, Nombre, Apellido) VALUES (?, ?, ?, 'Activo', ?, ?, ?, ?)";
-        String comprobacion = "¡Se han guardado tus datos correctamente en MySQL Workbench!";
+        String comprobacion = "Se han guardado tus datos correctamente";
         
         try {
             PreparedStatement ps = conec.prepareStatement(senSQL);
@@ -316,7 +316,7 @@ public class CrearCuenta extends javax.swing.JFrame {
                 JOptionPane.showOptionDialog(this, comprobacion, "MySQL INFORMATION", JOptionPane.INFORMATION_MESSAGE,
                         JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"ok"}, "ok");
                 
-                // Redirigir de inmediato al Login para que cales tu cuenta recién creada
+                
                 VentanaLogin login = new VentanaLogin();
                 login.setVisible(true);
                 this.dispose(); 
