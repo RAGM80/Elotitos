@@ -3,18 +3,27 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package intento;
-import javax.swing.table.DefaultTableModel;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 /**
  *
  * @author rafhi
  */
 public class VentanaHistorialVentas extends javax.swing.JFrame {
-    DefaultTableModel modelo;
+  private Connection cn;
+private PreparedStatement ps;
+private ResultSet rs;
+
+private int idPedidoSeleccionado = -1;  
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaHistorialVentas.class.getName());
 
     /**
@@ -22,66 +31,157 @@ public class VentanaHistorialVentas extends javax.swing.JFrame {
      */
     public VentanaHistorialVentas() {
         initComponents();
-        this.setLocationRelativeTo(null); // Centrar la ventana en pantalla
-        inicializarTabla();
-        cargarHistorial("");
-    }
-        private void inicializarTabla() {
-        String[] titulos = {"ID Venta", "Fecha y Hora", "Total", "Empleado"};
-        modelo = new DefaultTableModel(null, titulos) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false;
-            }
-        };
-        tablaHistorial.setModel(modelo);
-    }
+         this.setLocationRelativeTo(null);
 
-    public void cargarHistorial(String criterio) {
-        while (modelo.getRowCount() > 0) {
-            modelo.removeRow(0);
+    ConexionMySQL conexion = new ConexionMySQL();
+    cn = conexion.Conectar();
+
+    scrollPedidos.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+    scrollPedidos.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+    pnlPedidos.setLayout(new javax.swing.BoxLayout(pnlPedidos, javax.swing.BoxLayout.Y_AXIS));
+
+    cargarResumen();
+    cargarPedidos();
+    
+    }
+private void cargarResumen() {
+
+    try {
+        String sqlVentas = "SELECT IFNULL(SUM(total), 0) AS total FROM pedidos WHERE estado <> 'RECHAZADO'";
+        ps = cn.prepareStatement(sqlVentas);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            lblTotalVentas.setText("$" + String.format("%.2f", rs.getDouble("total")));
         }
 
-        ConexionMySQL mysql = new ConexionMySQL();
-        Connection cn = mysql.Conectar(); 
+        String sqlProductos =
+                "SELECT IFNULL(SUM(cantidad), 0) AS productos " +
+                "FROM detalle_pedido";
 
-        String sql = "SELECT id_venta, fecha, total, empleado FROM ventas";
-        
-        if (!criterio.isEmpty()) {
-            sql += " WHERE id_venta LIKE ? OR fecha LIKE ? OR empleado LIKE ?";
+        ps = cn.prepareStatement(sqlProductos);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            lblProductosVendidos.setText(String.valueOf(rs.getInt("productos")));
         }
-        
-        sql += " ORDER BY fecha DESC"; 
 
-        try {
-            PreparedStatement pst = cn.prepareStatement(sql);
-            
-            if (!criterio.isEmpty()) {
-                pst.setString(1, "%" + criterio + "%");
-                pst.setString(2, "%" + criterio + "%");
-                pst.setString(3, "%" + criterio + "%");
-            }
+        String sqlTransacciones =
+                "SELECT COUNT(*) AS transacciones " +
+                "FROM pedidos";
 
-            ResultSet rs = pst.executeQuery();
-            Object[] fila = new Object[4];
+        ps = cn.prepareStatement(sqlTransacciones);
+        rs = ps.executeQuery();
 
-            while (rs.next()) {
-                fila[0] = rs.getString("id_venta");
-                fila[1] = rs.getTimestamp("fecha"); 
-                fila[2] = "$" + rs.getDouble("total");
-                fila[3] = rs.getString("empleado");
-                
-                modelo.addRow(fila); 
-            }
-
-            rs.close();
-            pst.close();
-            cn.close();
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Error al cargar el historial: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        if (rs.next()) {
+            lblTransacciones.setText(String.valueOf(rs.getInt("transacciones")));
         }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar resumen: " + e.getMessage());
     }
+}
+private void cargarPedidos() {
+
+    pnlPedidos.removeAll();
+
+    try {
+        String sql =
+                "SELECT p.id_pedido, p.fecha, p.estado, p.total, u.Usuario AS cliente " +
+                "FROM pedidos p " +
+                "INNER JOIN usuarios u ON p.id_usuario = u.ID_Usuario " +
+                "ORDER BY p.id_pedido DESC";
+
+        ps = cn.prepareStatement(sql);
+        rs = ps.executeQuery();
+
+        boolean hayPedidos = false;
+
+        while (rs.next()) {
+            hayPedidos = true;
+
+            int idPedido = rs.getInt("id_pedido");
+            String fecha = rs.getString("fecha");
+            String estado = rs.getString("estado");
+            double total = rs.getDouble("total");
+            String cliente = rs.getString("cliente");
+
+            JPanel tarjeta = crearTarjetaPedido(idPedido, fecha, cliente, estado, total);
+
+            pnlPedidos.add(tarjeta);
+            pnlPedidos.add(Box.createVerticalStrut(15));
+        }
+
+        if (!hayPedidos) {
+            javax.swing.JLabel lblVacio = new javax.swing.JLabel("No hay pedidos registrados.");
+            lblVacio.setFont(new Font("Times New Roman", Font.BOLD, 18));
+            pnlPedidos.add(lblVacio);
+        }
+
+        pnlPedidos.revalidate();
+        pnlPedidos.repaint();
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al cargar pedidos: " + e.getMessage());
+    }
+}
+private JPanel crearTarjetaPedido(int idPedido, String fecha, String cliente, String estado, double total) {
+
+    JPanel tarjeta = new JPanel();
+    tarjeta.setBackground(new Color(217, 217, 217));
+    tarjeta.setPreferredSize(new Dimension(830, 120));
+    tarjeta.setMaximumSize(new Dimension(830, 120));
+    tarjeta.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
+    tarjeta.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
+
+    javax.swing.JLabel lblPedido = new javax.swing.JLabel("Pedido #" + String.format("%03d", idPedido));
+    lblPedido.setFont(new Font("Times New Roman", Font.BOLD, 22));
+    tarjeta.add(lblPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 15, 250, 30));
+
+    javax.swing.JLabel lblFecha = new javax.swing.JLabel(fecha);
+    lblFecha.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+    tarjeta.add(lblFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 50, 180, 25));
+
+    javax.swing.JLabel lblCliente = new javax.swing.JLabel("Cliente: " + cliente);
+    lblCliente.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+    tarjeta.add(lblCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 80, 250, 25));
+
+    javax.swing.JLabel lblEstado = new javax.swing.JLabel(estado);
+    lblEstado.setFont(new Font("Times New Roman", Font.BOLD, 16));
+
+    if (estado.equalsIgnoreCase("PENDIENTE")) {
+        lblEstado.setForeground(new Color(120, 100, 0));
+    } else if (estado.equalsIgnoreCase("ACEPTADO")) {
+        lblEstado.setForeground(new Color(0, 120, 0));
+    } else if (estado.equalsIgnoreCase("RECHAZADO")) {
+        lblEstado.setForeground(Color.RED);
+    } else {
+        lblEstado.setForeground(Color.DARK_GRAY);
+    }
+
+    tarjeta.add(lblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 20, 160, 25));
+
+    javax.swing.JLabel lblTotal = new javax.swing.JLabel("$" + String.format("%.2f", total));
+    lblTotal.setFont(new Font("Times New Roman", Font.BOLD, 20));
+    tarjeta.add(lblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 75, 140, 25));
+
+    tarjeta.addMouseListener(new java.awt.event.MouseAdapter() {
+        @Override
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            idPedidoSeleccionado = idPedido;
+
+            tarjeta.setBackground(new Color(190, 210, 255));
+
+            JOptionPane.showMessageDialog(
+                    VentanaHistorialVentas.this,
+                    "Pedido seleccionado: #" + idPedido
+            );
+        }
+    });
+
+    return tarjeta;
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -93,85 +193,189 @@ public class VentanaHistorialVentas extends javax.swing.JFrame {
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        txtBuscar = new javax.swing.JTextField();
-        btnBuscar = new javax.swing.JButton();
-        btnRestablecer = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        tablaHistorial = new javax.swing.JTable();
-        jButton1 = new javax.swing.JButton();
+        lblTitulo = new javax.swing.JLabel();
+        pnlVentasTotales = new javax.swing.JPanel();
+        lblVentasTitulo = new javax.swing.JLabel();
+        lblTotalVentas = new javax.swing.JLabel();
+        pnlProductosVendidos = new javax.swing.JPanel();
+        lblProductosTitulo = new javax.swing.JLabel();
+        lblProductosVendidos = new javax.swing.JLabel();
+        lblIconoProductos = new javax.swing.JLabel();
+        pnlTransacciones = new javax.swing.JPanel();
+        lblTransaccionesTitulo = new javax.swing.JLabel();
+        lblTransacciones = new javax.swing.JLabel();
+        lblIconoTransacciones = new javax.swing.JLabel();
+        btnRegistroProductos = new javax.swing.JButton();
+        btnHistorialVentas = new javax.swing.JButton();
+        btnAceptarPedido = new javax.swing.JButton();
+        btnRechazarPedido = new javax.swing.JButton();
+        scrollPedidos = new javax.swing.JScrollPane();
+        pnlPedidos = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jLabel1.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel1.setText("Panel de Ventas ");
+        lblTitulo.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
+        lblTitulo.setText("Historial de Ventas");
 
-        jLabel2.setText("BUSCAR");
+        lblVentasTitulo.setText("Ventas Totales");
 
-        txtBuscar.setText("jTextField1");
+        lblTotalVentas.setText("175");
 
-        btnBuscar.setText("Buscar");
+        javax.swing.GroupLayout pnlVentasTotalesLayout = new javax.swing.GroupLayout(pnlVentasTotales);
+        pnlVentasTotales.setLayout(pnlVentasTotalesLayout);
+        pnlVentasTotalesLayout.setHorizontalGroup(
+            pnlVentasTotalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlVentasTotalesLayout.createSequentialGroup()
+                .addGap(23, 23, 23)
+                .addGroup(pnlVentasTotalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addGroup(pnlVentasTotalesLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lblTotalVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(lblVentasTitulo))
+                .addContainerGap(20, Short.MAX_VALUE))
+        );
+        pnlVentasTotalesLayout.setVerticalGroup(
+            pnlVentasTotalesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlVentasTotalesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblVentasTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblTotalVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 27, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
-        btnRestablecer.setText("Restablecer");
+        lblProductosTitulo.setText("Productos vendidos");
 
-        tablaHistorial.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "ID Venta", "Fecha/Hora", "Total M.N.", "Empleado"
-            }
-        ));
-        jScrollPane1.setViewportView(tablaHistorial);
+        lblProductosVendidos.setText("15");
 
-        jButton1.setText("ver detalles");
+        lblIconoProductos.setText("📦");
+
+        javax.swing.GroupLayout pnlProductosVendidosLayout = new javax.swing.GroupLayout(pnlProductosVendidos);
+        pnlProductosVendidos.setLayout(pnlProductosVendidosLayout);
+        pnlProductosVendidosLayout.setHorizontalGroup(
+            pnlProductosVendidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlProductosVendidosLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlProductosVendidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlProductosVendidosLayout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addComponent(lblProductosVendidos, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblIconoProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblProductosTitulo))
+                .addContainerGap(27, Short.MAX_VALUE))
+        );
+        pnlProductosVendidosLayout.setVerticalGroup(
+            pnlProductosVendidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlProductosVendidosLayout.createSequentialGroup()
+                .addComponent(lblProductosTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlProductosVendidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblProductosVendidos)
+                    .addComponent(lblIconoProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE))
+        );
+
+        lblTransaccionesTitulo.setText("Transacciones");
+
+        lblTransacciones.setText("2");
+
+        lblIconoTransacciones.setText("💸");
+
+        javax.swing.GroupLayout pnlTransaccionesLayout = new javax.swing.GroupLayout(pnlTransacciones);
+        pnlTransacciones.setLayout(pnlTransaccionesLayout);
+        pnlTransaccionesLayout.setHorizontalGroup(
+            pnlTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlTransaccionesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(pnlTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblTransaccionesTitulo)
+                    .addGroup(pnlTransaccionesLayout.createSequentialGroup()
+                        .addComponent(lblTransacciones, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(lblIconoTransacciones)))
+                .addContainerGap(109, Short.MAX_VALUE))
+        );
+        pnlTransaccionesLayout.setVerticalGroup(
+            pnlTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(pnlTransaccionesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblTransaccionesTitulo)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(pnlTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lblTransacciones)
+                    .addComponent(lblIconoTransacciones))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        btnRegistroProductos.setText("Registro de Productos");
+        btnRegistroProductos.addActionListener(this::btnRegistroProductosActionPerformed);
+
+        btnHistorialVentas.setText("Historial de ventas");
+
+        btnAceptarPedido.setText("Aceptar pedido");
+        btnAceptarPedido.addActionListener(this::btnAceptarPedidoActionPerformed);
+
+        btnRechazarPedido.setText("Rechazar pedido");
+        btnRechazarPedido.addActionListener(this::btnRechazarPedidoActionPerformed);
+
+        pnlPedidos.setLayout(new javax.swing.BoxLayout(pnlPedidos, javax.swing.BoxLayout.LINE_AXIS));
+        scrollPedidos.setViewportView(pnlPedidos);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(113, 113, 113)
+                .addComponent(btnAceptarPedido)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnRechazarPedido)
+                .addGap(140, 140, 140))
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(15, 15, 15)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 619, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(39, 39, 39)
-                                .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(78, 78, 78)
-                                .addComponent(btnBuscar)
-                                .addGap(65, 65, 65)
-                                .addComponent(btnRestablecer))
-                            .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 202, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(83, 83, 83)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(242, 242, 242)
-                        .addComponent(jButton1)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                        .addGap(35, 35, 35)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(btnRegistroProductos)
+                                .addGap(90, 90, 90)
+                                .addComponent(btnHistorialVentas))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(pnlVentasTotales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(43, 43, 43)
+                                .addComponent(pnlProductosVendidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(pnlTransacciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(17, 17, 17)
+                        .addComponent(scrollPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 593, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(25, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(btnBuscar)
-                        .addComponent(btnRestablecer, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(pnlTransacciones, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlVentasTotales, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(pnlProductosVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 254, Short.MAX_VALUE)
-                .addGap(40, 40, 40)
-                .addComponent(jButton1)
-                .addGap(35, 35, 35))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnRegistroProductos)
+                    .addComponent(btnHistorialVentas))
+                .addGap(18, 18, 18)
+                .addComponent(scrollPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnAceptarPedido)
+                    .addComponent(btnRechazarPedido))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -193,6 +397,77 @@ public class VentanaHistorialVentas extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAceptarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarPedidoActionPerformed
+if (idPedidoSeleccionado == -1) {
+        JOptionPane.showMessageDialog(this, "Selecciona primero un pedido.");
+        return;
+    }
+
+    try {
+        String sql = "UPDATE pedidos SET estado = 'ACEPTADO' WHERE id_pedido = ?";
+        ps = cn.prepareStatement(sql);
+        ps.setInt(1, idPedidoSeleccionado);
+
+        int filas = ps.executeUpdate();
+
+        if (filas > 0) {
+            JOptionPane.showMessageDialog(this, "Pedido aceptado correctamente.");
+            idPedidoSeleccionado = -1;
+            cargarResumen();
+            cargarPedidos();
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al aceptar pedido: " + e.getMessage());
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAceptarPedidoActionPerformed
+
+    private void btnRechazarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRechazarPedidoActionPerformed
+ if (idPedidoSeleccionado == -1) {
+        JOptionPane.showMessageDialog(this, "Selecciona primero un pedido.");
+        return;
+    }
+
+    int opcion = JOptionPane.showConfirmDialog(
+            this,
+            "¿Seguro que deseas rechazar este pedido?",
+            "Confirmar rechazo",
+            JOptionPane.YES_NO_OPTION
+    );
+
+    if (opcion != JOptionPane.YES_OPTION) {
+        return;
+    }
+
+    try {
+        String sql = "UPDATE pedidos SET estado = 'RECHAZADO' WHERE id_pedido = ?";
+        ps = cn.prepareStatement(sql);
+        ps.setInt(1, idPedidoSeleccionado);
+
+        int filas = ps.executeUpdate();
+
+        if (filas > 0) {
+            JOptionPane.showMessageDialog(this, "Pedido rechazado correctamente.");
+            idPedidoSeleccionado = -1;
+            cargarResumen();
+            cargarPedidos();
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(this, "Error al rechazar pedido: " + e.getMessage());
+    }
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRechazarPedidoActionPerformed
+
+    private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
+    PanelVentas ventana = new PanelVentas();
+ventana.setVisible(true);
+ventana.setLocationRelativeTo(null);
+this.dispose();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnRegistroProductosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -220,14 +495,24 @@ public class VentanaHistorialVentas extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnRestablecer;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
+    private javax.swing.JButton btnAceptarPedido;
+    private javax.swing.JButton btnHistorialVentas;
+    private javax.swing.JButton btnRechazarPedido;
+    private javax.swing.JButton btnRegistroProductos;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tablaHistorial;
-    private javax.swing.JTextField txtBuscar;
+    private javax.swing.JLabel lblIconoProductos;
+    private javax.swing.JLabel lblIconoTransacciones;
+    private javax.swing.JLabel lblProductosTitulo;
+    private javax.swing.JLabel lblProductosVendidos;
+    private javax.swing.JLabel lblTitulo;
+    private javax.swing.JLabel lblTotalVentas;
+    private javax.swing.JLabel lblTransacciones;
+    private javax.swing.JLabel lblTransaccionesTitulo;
+    private javax.swing.JLabel lblVentasTitulo;
+    private javax.swing.JPanel pnlPedidos;
+    private javax.swing.JPanel pnlProductosVendidos;
+    private javax.swing.JPanel pnlTransacciones;
+    private javax.swing.JPanel pnlVentasTotales;
+    private javax.swing.JScrollPane scrollPedidos;
     // End of variables declaration//GEN-END:variables
 }
