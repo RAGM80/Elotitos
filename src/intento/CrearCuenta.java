@@ -142,8 +142,9 @@ public class CrearCuenta extends javax.swing.JFrame {
         cmbRol.addActionListener(this::cmbRolActionPerformed);
 
         pwdContrasena.setBackground(new java.awt.Color(204, 204, 204));
-        pwdContrasena.setText("dsassasafassaf");
+        pwdContrasena.setText("hola");
         pwdContrasena.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        pwdContrasena.addActionListener(this::pwdContrasenaActionPerformed);
 
         pwdConfirmarContrasena.setBackground(new java.awt.Color(204, 204, 204));
         pwdConfirmarContrasena.setText("jPasswordField2");
@@ -158,7 +159,6 @@ public class CrearCuenta extends javax.swing.JFrame {
         btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(this::btnGuardarActionPerformed);
 
-        lblVerContrasena.setIcon(new javax.swing.ImageIcon(getClass().getResource("/intento/pngwing.com.png"))); // NOI18N
         lblVerContrasena.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 lblVerContrasenaMouseClicked(evt);
@@ -454,6 +454,10 @@ public class CrearCuenta extends javax.swing.JFrame {
     // 1. Obtener los datos de los campos de texto (Ajusta los nombres de tus variables si cambian)
    
     }//GEN-LAST:event_btnGuardarActionPerformed
+
+    private void pwdContrasenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pwdContrasenaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pwdContrasenaActionPerformed
 
     /**
      * @param args the command line arguments
