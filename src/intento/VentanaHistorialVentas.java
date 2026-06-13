@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JButton;
 
 /**
  *
@@ -31,6 +32,7 @@ private int idPedidoSeleccionado = -1;
      */
     public VentanaHistorialVentas() {
         initComponents();
+        marcarBotonActual();
          this.setLocationRelativeTo(null);
 
     ConexionMySQL conexion = new ConexionMySQL();
@@ -63,6 +65,24 @@ private int idPedidoSeleccionado = -1;
     cargarPedidos();
     
     }
+    private void botonActivo(JButton boton) {
+    boton.setBackground(new Color(36, 107, 255));
+    boton.setForeground(Color.WHITE);
+    boton.setOpaque(true);
+    boton.setBorderPainted(false);
+}
+
+private void botonInactivo(JButton boton) {
+    boton.setBackground(new Color(204, 204, 204));
+    boton.setForeground(Color.BLACK);
+    boton.setOpaque(true);
+    boton.setBorderPainted(false);
+}
+
+private void marcarBotonActual() {
+    botonInactivo(btnRegistroProductos);
+    botonActivo(btnHistorialVentas);
+}
 private void cargarResumen() {
 
     try {
@@ -399,9 +419,11 @@ private JPanel crearTarjetaPedido(
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        btnRegistroProductos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         btnRegistroProductos.setText("Registro de Productos");
         btnRegistroProductos.addActionListener(this::btnRegistroProductosActionPerformed);
 
+        btnHistorialVentas.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         btnHistorialVentas.setText("Historial de ventas");
         btnHistorialVentas.addActionListener(this::btnHistorialVentasActionPerformed);
 
@@ -458,12 +480,12 @@ private JPanel crearTarjetaPedido(
                     .addComponent(pnlVentasTotales, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(pnlProductosVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnRegistroProductos)
-                    .addComponent(btnHistorialVentas))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btnHistorialVentas)
+                    .addComponent(btnRegistroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(scrollPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
+                .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAceptarPedido)
                     .addComponent(btnRechazarPedido))
@@ -577,15 +599,16 @@ if (idPedidoSeleccionado == -1) {
 
     private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
     PanelVentas ventana = new PanelVentas();
-ventana.setVisible(true);
-ventana.setLocationRelativeTo(null);
-this.dispose();
+    ventana.setVisible(true);
+    ventana.setLocationRelativeTo(null);
+    this.dispose();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnRegistroProductosActionPerformed
 
     private void btnHistorialVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialVentasActionPerformed
+    marcarBotonActual();
     cargarResumen();
-cargarPedidos();
+    cargarPedidos();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnHistorialVentasActionPerformed
 
