@@ -36,10 +36,28 @@ private int idPedidoSeleccionado = -1;
     ConexionMySQL conexion = new ConexionMySQL();
     cn = conexion.Conectar();
 
-    scrollPedidos.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPedidos.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+    if (cn == null) {
+        javax.swing.JOptionPane.showMessageDialog(
+                this,
+                "No se pudo conectar a la base de datos."
+        );
+        return;
+    }
 
-    pnlPedidos.setLayout(new javax.swing.BoxLayout(pnlPedidos, javax.swing.BoxLayout.Y_AXIS));
+    scrollPedidos.setHorizontalScrollBarPolicy(
+            javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER
+    );
+
+    scrollPedidos.setVerticalScrollBarPolicy(
+            javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED
+    );
+
+    pnlPedidos.setLayout(
+            new javax.swing.BoxLayout(
+                    pnlPedidos,
+                    javax.swing.BoxLayout.Y_AXIS
+            )
+    );
 
     cargarResumen();
     cargarPedidos();
@@ -48,28 +66,31 @@ private int idPedidoSeleccionado = -1;
 private void cargarResumen() {
 
     try {
-        String sqlVentas = "SELECT IFNULL(SUM(total), 0) AS total FROM pedidos WHERE estado <> 'RECHAZADO'";
+        String sqlVentas =
+                "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
+                "FROM ventas";
+
         ps = cn.prepareStatement(sqlVentas);
         rs = ps.executeQuery();
 
         if (rs.next()) {
-            lblTotalVentas.setText("$" + String.format("%.2f", rs.getDouble("total")));
+            lblTotalVentas.setText("$" + String.format("%.2f", rs.getDouble("total_ventas")));
         }
 
         String sqlProductos =
-                "SELECT IFNULL(SUM(cantidad), 0) AS productos " +
-                "FROM detalle_pedido";
+                "SELECT COUNT(*) AS productos_vendidos " +
+                "FROM detalle_ventas";
 
         ps = cn.prepareStatement(sqlProductos);
         rs = ps.executeQuery();
 
         if (rs.next()) {
-            lblProductosVendidos.setText(String.valueOf(rs.getInt("productos")));
+            lblProductosVendidos.setText(String.valueOf(rs.getInt("productos_vendidos")));
         }
 
         String sqlTransacciones =
                 "SELECT COUNT(*) AS transacciones " +
-                "FROM pedidos";
+                "FROM ventas";
 
         ps = cn.prepareStatement(sqlTransacciones);
         rs = ps.executeQuery();
@@ -79,7 +100,10 @@ private void cargarResumen() {
         }
 
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al cargar resumen: " + e.getMessage());
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al cargar resumen: " + e.getMessage()
+        );
     }
 }
 private void cargarPedidos() {
@@ -88,10 +112,20 @@ private void cargarPedidos() {
 
     try {
         String sql =
-                "SELECT p.id_pedido, p.fecha, p.estado, p.total, u.Usuario AS cliente " +
+                "SELECT " +
+                "p.Id_Pedido, " +
+                "p.Estado, " +
+                "p.Hora_inicio, " +
+                "p.Hora_entrega, " +
+                "v.Fecha, " +
+                "v.Total, " +
+                "u.Nombre, " +
+                "u.Apellido, " +
+                "u.Usuario " +
                 "FROM pedidos p " +
-                "INNER JOIN usuarios u ON p.id_usuario = u.ID_Usuario " +
-                "ORDER BY p.id_pedido DESC";
+                "INNER JOIN ventas v ON p.Id_Venta = v.Id_Venta " +
+                "INNER JOIN usuarios u ON v.Id_Usuario = u.Id_Usuario " +
+                "ORDER BY p.Id_Pedido DESC";
 
         ps = cn.prepareStatement(sql);
         rs = ps.executeQuery();
@@ -101,21 +135,35 @@ private void cargarPedidos() {
         while (rs.next()) {
             hayPedidos = true;
 
-            int idPedido = rs.getInt("id_pedido");
-            String fecha = rs.getString("fecha");
-            String estado = rs.getString("estado");
-            double total = rs.getDouble("total");
-            String cliente = rs.getString("cliente");
+            int idPedido = rs.getInt("Id_Pedido");
+            String fecha = rs.getString("Fecha");
+            String estado = rs.getString("Estado");
+            double total = rs.getDouble("Total");
 
-            JPanel tarjeta = crearTarjetaPedido(idPedido, fecha, cliente, estado, total);
+            String cliente =
+                    rs.getString("Nombre") + " " +
+                    rs.getString("Apellido");
+
+            JPanel tarjeta = crearTarjetaPedido(
+                    idPedido,
+                    fecha,
+                    cliente,
+                    estado,
+                    total
+            );
 
             pnlPedidos.add(tarjeta);
             pnlPedidos.add(Box.createVerticalStrut(15));
         }
 
         if (!hayPedidos) {
-            javax.swing.JLabel lblVacio = new javax.swing.JLabel("No hay pedidos registrados.");
-            lblVacio.setFont(new Font("Times New Roman", Font.BOLD, 18));
+            javax.swing.JLabel lblVacio =
+                    new javax.swing.JLabel("No hay pedidos registrados.");
+
+            lblVacio.setFont(
+                    new Font("Times New Roman", Font.BOLD, 18)
+            );
+
             pnlPedidos.add(lblVacio);
         }
 
@@ -123,36 +171,69 @@ private void cargarPedidos() {
         pnlPedidos.repaint();
 
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al cargar pedidos: " + e.getMessage());
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al cargar pedidos: " + e.getMessage()
+        );
     }
 }
-private JPanel crearTarjetaPedido(int idPedido, String fecha, String cliente, String estado, double total) {
+private JPanel crearTarjetaPedido(
+        int idPedido,
+        String fecha,
+        String cliente,
+        String estado,
+        double total) {
 
     JPanel tarjeta = new JPanel();
     tarjeta.setBackground(new Color(217, 217, 217));
-    tarjeta.setPreferredSize(new Dimension(830, 120));
-    tarjeta.setMaximumSize(new Dimension(830, 120));
+    tarjeta.setPreferredSize(new Dimension(540, 120));
+    tarjeta.setMaximumSize(new Dimension(540, 120));
     tarjeta.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-    tarjeta.setBorder(BorderFactory.createLineBorder(new Color(180, 180, 180)));
+    tarjeta.setBorder(
+            BorderFactory.createLineBorder(
+                    new Color(180, 180, 180)
+            )
+    );
 
-    javax.swing.JLabel lblPedido = new javax.swing.JLabel("Pedido #" + String.format("%03d", idPedido));
-    lblPedido.setFont(new Font("Times New Roman", Font.BOLD, 22));
-    tarjeta.add(lblPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 15, 250, 30));
+    javax.swing.JLabel lblPedido =
+            new javax.swing.JLabel("Pedido #" + String.format("%03d", idPedido));
 
-    javax.swing.JLabel lblFecha = new javax.swing.JLabel(fecha);
-    lblFecha.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-    tarjeta.add(lblFecha, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 50, 180, 25));
+    lblPedido.setFont(new Font("Times New Roman", Font.BOLD, 20));
 
-    javax.swing.JLabel lblCliente = new javax.swing.JLabel("Cliente: " + cliente);
-    lblCliente.setFont(new Font("Times New Roman", Font.PLAIN, 16));
-    tarjeta.add(lblCliente, new org.netbeans.lib.awtextra.AbsoluteConstraints(25, 80, 250, 25));
+    tarjeta.add(
+            lblPedido,
+            new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, 200, 30)
+    );
 
-    javax.swing.JLabel lblEstado = new javax.swing.JLabel(estado);
-    lblEstado.setFont(new Font("Times New Roman", Font.BOLD, 16));
+    javax.swing.JLabel lblFecha =
+            new javax.swing.JLabel(fecha);
+
+    lblFecha.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+    tarjeta.add(
+            lblFecha,
+            new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 220, 25)
+    );
+
+    javax.swing.JLabel lblCliente =
+            new javax.swing.JLabel("Cliente: " + cliente);
+
+    lblCliente.setFont(new Font("Times New Roman", Font.PLAIN, 15));
+
+    tarjeta.add(
+            lblCliente,
+            new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 300, 25)
+    );
+
+    javax.swing.JLabel lblEstado =
+            new javax.swing.JLabel(estado);
+
+    lblEstado.setFont(new Font("Times New Roman", Font.BOLD, 15));
 
     if (estado.equalsIgnoreCase("PENDIENTE")) {
         lblEstado.setForeground(new Color(120, 100, 0));
-    } else if (estado.equalsIgnoreCase("ACEPTADO")) {
+    } else if (estado.equalsIgnoreCase("ACEPTADO")
+            || estado.equalsIgnoreCase("En Camino")) {
         lblEstado.setForeground(new Color(0, 120, 0));
     } else if (estado.equalsIgnoreCase("RECHAZADO")) {
         lblEstado.setForeground(Color.RED);
@@ -160,15 +241,25 @@ private JPanel crearTarjetaPedido(int idPedido, String fecha, String cliente, St
         lblEstado.setForeground(Color.DARK_GRAY);
     }
 
-    tarjeta.add(lblEstado, new org.netbeans.lib.awtextra.AbsoluteConstraints(620, 20, 160, 25));
+    tarjeta.add(
+            lblEstado,
+            new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 20, 130, 25)
+    );
 
-    javax.swing.JLabel lblTotal = new javax.swing.JLabel("$" + String.format("%.2f", total));
-    lblTotal.setFont(new Font("Times New Roman", Font.BOLD, 20));
-    tarjeta.add(lblTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 75, 140, 25));
+    javax.swing.JLabel lblTotal =
+            new javax.swing.JLabel("$" + String.format("%.2f", total));
+
+    lblTotal.setFont(new Font("Times New Roman", Font.BOLD, 18));
+
+    tarjeta.add(
+            lblTotal,
+            new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 75, 120, 25)
+    );
 
     tarjeta.addMouseListener(new java.awt.event.MouseAdapter() {
         @Override
         public void mouseClicked(java.awt.event.MouseEvent evt) {
+
             idPedidoSeleccionado = idPedido;
 
             tarjeta.setBackground(new Color(190, 210, 255));
@@ -312,6 +403,7 @@ private JPanel crearTarjetaPedido(int idPedido, String fecha, String cliente, St
         btnRegistroProductos.addActionListener(this::btnRegistroProductosActionPerformed);
 
         btnHistorialVentas.setText("Historial de ventas");
+        btnHistorialVentas.addActionListener(this::btnHistorialVentasActionPerformed);
 
         btnAceptarPedido.setText("Aceptar pedido");
         btnAceptarPedido.addActionListener(this::btnAceptarPedidoActionPerformed);
@@ -405,21 +497,32 @@ if (idPedidoSeleccionado == -1) {
     }
 
     try {
-        String sql = "UPDATE pedidos SET estado = 'ACEPTADO' WHERE id_pedido = ?";
+        String sql =
+                "UPDATE pedidos " +
+                "SET Estado = 'ACEPTADO' " +
+                "WHERE Id_Pedido = ?";
+
         ps = cn.prepareStatement(sql);
         ps.setInt(1, idPedidoSeleccionado);
 
         int filas = ps.executeUpdate();
 
         if (filas > 0) {
-            JOptionPane.showMessageDialog(this, "Pedido aceptado correctamente.");
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pedido aceptado correctamente."
+            );
+
             idPedidoSeleccionado = -1;
             cargarResumen();
             cargarPedidos();
         }
 
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al aceptar pedido: " + e.getMessage());
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al aceptar pedido: " + e.getMessage()
+        );
     }
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAceptarPedidoActionPerformed
@@ -442,21 +545,32 @@ if (idPedidoSeleccionado == -1) {
     }
 
     try {
-        String sql = "UPDATE pedidos SET estado = 'RECHAZADO' WHERE id_pedido = ?";
+        String sql =
+                "UPDATE pedidos " +
+                "SET Estado = 'RECHAZADO' " +
+                "WHERE Id_Pedido = ?";
+
         ps = cn.prepareStatement(sql);
         ps.setInt(1, idPedidoSeleccionado);
 
         int filas = ps.executeUpdate();
 
         if (filas > 0) {
-            JOptionPane.showMessageDialog(this, "Pedido rechazado correctamente.");
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Pedido rechazado correctamente."
+            );
+
             idPedidoSeleccionado = -1;
             cargarResumen();
             cargarPedidos();
         }
 
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(this, "Error al rechazar pedido: " + e.getMessage());
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al rechazar pedido: " + e.getMessage()
+        );
     }
         // TODO add your handling code here:
     }//GEN-LAST:event_btnRechazarPedidoActionPerformed
@@ -468,6 +582,12 @@ ventana.setLocationRelativeTo(null);
 this.dispose();
         // TODO add your handling code here:
     }//GEN-LAST:event_btnRegistroProductosActionPerformed
+
+    private void btnHistorialVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialVentasActionPerformed
+    cargarResumen();
+cargarPedidos();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnHistorialVentasActionPerformed
 
     /**
      * @param args the command line arguments
