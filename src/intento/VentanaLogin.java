@@ -58,7 +58,6 @@ boolean passVisible = false;
         txtUsuario = new javax.swing.JTextField();
         btnCrearCuenta = new javax.swing.JButton();
         btnIniciarSesion = new javax.swing.JButton();
-        lblOlvideUsuario = new javax.swing.JLabel();
         lblOlvideContrasena = new javax.swing.JLabel();
         lblVerContra = new javax.swing.JLabel();
         pwdContraseña1 = new javax.swing.JPasswordField();
@@ -90,10 +89,6 @@ boolean passVisible = false;
         btnIniciarSesion.setForeground(new java.awt.Color(255, 255, 255));
         btnIniciarSesion.setText("Iniciar Sesión");
         btnIniciarSesion.addActionListener(this::btnIniciarSesionActionPerformed);
-
-        lblOlvideUsuario.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
-        lblOlvideUsuario.setForeground(new java.awt.Color(51, 51, 255));
-        lblOlvideUsuario.setText("olvide mi usuario");
 
         lblOlvideContrasena.setFont(new java.awt.Font("Times New Roman", 0, 12)); // NOI18N
         lblOlvideContrasena.setForeground(new java.awt.Color(51, 51, 255));
@@ -134,9 +129,7 @@ boolean passVisible = false;
                             .addComponent(btnIniciarSesion, javax.swing.GroupLayout.PREFERRED_SIZE, 221, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(panPrincipalLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addGroup(panPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblOlvideUsuario)
-                            .addComponent(lblOlvideContrasena)))
+                        .addComponent(lblOlvideContrasena))
                     .addGroup(panPrincipalLayout.createSequentialGroup()
                         .addComponent(pwdContraseña1, javax.swing.GroupLayout.PREFERRED_SIZE, 234, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -152,9 +145,7 @@ boolean passVisible = false;
                 .addComponent(lblSubtitulo)
                 .addGap(42, 42, 42)
                 .addComponent(txtUsuario, javax.swing.GroupLayout.PREFERRED_SIZE, 45, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblOlvideUsuario)
-                .addGap(18, 18, 18)
+                .addGap(39, 39, 39)
                 .addGroup(panPrincipalLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(pwdContraseña1, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lblVerContra, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -290,7 +281,6 @@ boolean passVisible = false;
     private javax.swing.JButton btnCrearCuenta;
     private javax.swing.JButton btnIniciarSesion;
     private javax.swing.JLabel lblOlvideContrasena;
-    private javax.swing.JLabel lblOlvideUsuario;
     private javax.swing.JLabel lblSubtitulo;
     private javax.swing.JLabel lblTitulo;
     private javax.swing.JLabel lblVerContra;
