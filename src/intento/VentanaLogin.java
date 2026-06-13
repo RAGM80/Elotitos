@@ -187,45 +187,117 @@ boolean passVisible = false;
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
     String userText = txtUsuario.getText().trim();
-    String passText = pwdContraseña1.getText().trim(); 
-    if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
-        passText.isEmpty() || passText.equals("ingresa tu contraseña")) {
-        JOptionPane.showMessageDialog(this, "Por favor, ingresa tus datos de acceso.");
+    String passText = new String(pwdContraseña1.getPassword()).trim();
+    if (userText.isEmpty() || userText.equals("ingresa tu usuario")
+            || passText.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                this,
+                "Por favor, ingresa tus datos de acceso."
+        );
         return;
     }
     ConexionMySQL mysql = new ConexionMySQL();
     Connection con = mysql.Conectar();
-    
     if (con == null) {
-        return; 
+        JOptionPane.showMessageDialog(
+                this,
+                "No se pudo conectar a la base de datos."
+        );
+        return;
     }
-    String sql = "SELECT Estado FROM usuarios WHERE Usuario = ? AND Contrasena = ?";
+    String sql =
+        "SELECT Id_Usuario, Estado, Rol " +
+        "FROM usuarios " +
+        "WHERE Usuario = ? AND Contrasena = ?";
+
     try (PreparedStatement pst = con.prepareStatement(sql)) {
+
         pst.setString(1, userText);
         pst.setString(2, passText);
-        
+
         try (ResultSet rs = pst.executeQuery()) {
-        if (rs.next()) {
-        String estado = rs.getString("Estado");
-        if (estado.equalsIgnoreCase("Activo")) {
-        JOptionPane.showMessageDialog(this, "¡Conexión Exitosa!\nBienvenido al sistema, " + userText);
-        VentanaProductos tienda = new VentanaProductos();
-        tienda.setVisible(true);
-        this.dispose(); 
-        } else {
-        JOptionPane.showMessageDialog(this, "Esta cuenta se encuentra inactiva.");
+
+            if (rs.next()) {
+                int idUsuario = rs.getInt("Id_Usuario");
+                String estado = rs.getString("Estado");
+                String rol = rs.getString("Rol");
+
+                if (!estado.equalsIgnoreCase("Activo")) {
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Esta cuenta se encuentra inactiva."
+                    );
+                    return;
+                }
+
+                rol = rol.trim();
+
+                if (rol.equalsIgnoreCase("Administrador")) {
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Bienvenido administrador: " + userText
+                    );
+                    PanelAdministrativo ventana = new PanelAdministrativo();
+                    ventana.setVisible(true);
+                    ventana.setLocationRelativeTo(null);
+                    this.dispose();
+
+                } else if (rol.equalsIgnoreCase("Vendedor")) {
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Bienvenido vendedor: " + userText
+                    );
+
+                    PanelVentas ventana = new PanelVentas(idUsuario);
+                    ventana.setVisible(true);
+                    ventana.setLocationRelativeTo(null);
+                    this.dispose();
+
+                } else if (rol.equalsIgnoreCase("Cliente")) {
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Bienvenido cliente: " + userText
+                    );
+
+                    VentanaProductos ventana = new VentanaProductos();
+                    ventana.setVisible(true);
+                    ventana.setLocationRelativeTo(null);
+                    this.dispose();
+
+                } else {
+
+                    JOptionPane.showMessageDialog(
+                            this,
+                            "Rol no reconocido: " + rol
+                    );
+                }
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Usuario o contraseña incorrectos."
+                );
+            }
         }
-        } else {
-        JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos. Intenta de nuevo.");
-        }
-        }
-    } catch (SQLException e) {
-        JOptionPane.showMessageDialog(this, "Error en la base de datos: " + e.getMessage());
+
+    } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al iniciar sesión: " + e.getMessage()
+        );
+
     } finally {
         try {
-            if (con != null) con.close(); 
-        } catch (SQLException ex) {
-            System.out.println("Error al cerrar conexión: " + ex.getMessage());
+            if (con != null) {
+                con.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cerrar conexión: " + e.getMessage());
         }
     }
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
