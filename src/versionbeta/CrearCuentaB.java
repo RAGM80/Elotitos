@@ -90,6 +90,7 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
         txtPregunta = new javax.swing.JTextField();
         lblAyudaPregunta = new javax.swing.JLabel();
         txtRespuesta = new javax.swing.JTextField();
+        btnRegresar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -198,6 +199,13 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             }
         });
 
+        btnRegresar.setBackground(new java.awt.Color(204, 204, 204));
+        btnRegresar.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        btnRegresar.setText("Regresar");
+        btnRegresar.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        btnRegresar.setFocusPainted(false);
+        btnRegresar.addActionListener(this::btnRegresarActionPerformed);
+
         javax.swing.GroupLayout pnlFondoLayout = new javax.swing.GroupLayout(pnlFondo);
         pnlFondo.setLayout(pnlFondoLayout);
         pnlFondoLayout.setHorizontalGroup(
@@ -217,16 +225,20 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
                             .addComponent(txtUsuario)
                             .addComponent(cmbRol, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(pwdConfirmarContrasena)
-                            .addGroup(pnlFondoLayout.createSequentialGroup()
-                                .addGap(31, 31, 31)
-                                .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(txtPregunta)
                             .addComponent(lblAyudaPregunta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(txtRespuesta))
                         .addContainerGap(34, Short.MAX_VALUE))))
             .addGroup(pnlFondoLayout.createSequentialGroup()
-                .addGap(141, 141, 141)
-                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(pnlFondoLayout.createSequentialGroup()
+                        .addGap(67, 67, 67)
+                        .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(50, 50, 50)
+                        .addComponent(btnRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(pnlFondoLayout.createSequentialGroup()
+                        .addGap(102, 102, 102)
+                        .addComponent(lblTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, 174, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         pnlFondoLayout.setVerticalGroup(
@@ -253,9 +265,11 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
                 .addComponent(lblAyudaPregunta, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtRespuesta, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(29, 29, 29)
-                .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(32, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addGroup(pnlFondoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnGuardar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnRegresar, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(23, 23, 23))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -470,6 +484,26 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
    
     }//GEN-LAST:event_btnGuardarActionPerformed
 
+    private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
+    txtUsuario.setText(""); 
+    pwdContrasena.setText(""); 
+    txtUsuario.setText("ingresa tu usuario");
+    txtUsuario.setForeground(new java.awt.Color(153, 153, 153)); 
+    javax.swing.JDesktopPane desktop = this.getDesktopPane();
+    if (desktop != null) {
+        java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
+        MyDesktopB principal = (win instanceof MyDesktopB) ? (MyDesktopB) win : null;
+        VentanaLoginB login = new VentanaLoginB(principal);
+        desktop.add(login);
+        login.setVisible(true);
+        login.setSize(400, 485);
+        int x = (desktop.getWidth() - login.getWidth()) / 2;
+        int y = (desktop.getHeight() - login.getHeight()) / 2;
+        login.setLocation(x, y);
+    }
+    this.dispose();
+    }//GEN-LAST:event_btnRegresarActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -496,6 +530,7 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
 }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnGuardar;
+    private javax.swing.JButton btnRegresar;
     private javax.swing.JComboBox<String> cmbRol;
     private javax.swing.JLabel lblAyudaPregunta;
     private javax.swing.JLabel lblTitulo;

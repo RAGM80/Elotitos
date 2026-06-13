@@ -3,7 +3,6 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package versionbeta;
-import intento.VentanaProductos;
 import intento.VentanaRecuperar;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -199,83 +198,94 @@ boolean passVisible = false;
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
     String userText = txtUsuario.getText().trim();
-        String passText = pwdContraseña1.getText().trim(); 
+    String passText = pwdContraseña1.getText().trim(); 
+    
+    if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
+        passText.isEmpty() || passText.equals("ingresa tu contraseña")) {
+        JOptionPane.showMessageDialog(this, "Por favor, ingresa tus datos de acceso.");
+        return;
+    }
+    
+    ConexionMySQL mysql = new ConexionMySQL();
+    Connection con = mysql.Conectar();
+    if (con == null) {
+        JOptionPane.showMessageDialog(this, "No se pudo establecer comunicación con el servidor.", "Error de red", JOptionPane.ERROR_MESSAGE);
+        return; 
+    }
+    String sql = "SELECT Id_Usuario, Estado, Rol FROM usuarios WHERE Usuario = ? AND Contrasena = ?";
+    
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+        pst.setString(1, userText);
+        pst.setString(2, passText);
         
-        if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
-            passText.isEmpty() || passText.equals("ingresa tu contraseña")) {
-            JOptionPane.showMessageDialog(this, "Por favor, ingresa tus datos de acceso.");
-            return;
-        }
-        
-        ConexionMySQL mysql = new ConexionMySQL();
-        Connection con = mysql.Conectar();
-        if (con == null) {
-            return; 
-        }
-        String sql = "SELECT Id_Usuario, Estado, Rol FROM usuarios WHERE Usuario = ? AND Contrasena = ?";
-        
-        try (PreparedStatement pst = con.prepareStatement(sql)) {
-            pst.setString(1, userText);
-            pst.setString(2, passText);
-            
-            try (ResultSet rs = pst.executeQuery()) {
-                if (rs.next()) {
-                    int idVendedor = rs.getInt("Id_Usuario");
-                    
-                    String estado = rs.getString("Estado");
-                    String rol = rs.getString("Rol"); 
-                    
-                    if (estado.equalsIgnoreCase("Activo")) {
-                        JOptionPane.showMessageDialog(this, "¡Conexión Exitosa!\nBienvenido al sistema, " + userText);
+        try (ResultSet rs = pst.executeQuery()) {
+            if (rs.next()) {
+                int idVendedor = rs.getInt("Id_Usuario");
+                
+                String estado = rs.getString("Estado");
+                String rol = rs.getString("Rol"); 
+                
+                if (estado.equalsIgnoreCase("Activo")) {
+                    if (rol.equalsIgnoreCase("Administrador")) {
+
+                        JOptionPane.showMessageDialog(this, "¡Bienvenido Administrador, " + userText + "!");
+                        versionbeta.VentanaAdministrativoB admin = new versionbeta.VentanaAdministrativoB();
                         
-                        if (rol.equalsIgnoreCase("Administrador")) {
-                            VentanaAdministrativoB admin = new VentanaAdministrativoB();
+                        if (this.jefe != null) {
+                            this.jefe.jDesktopPane1.add(admin); 
                             admin.setVisible(true);
-                        } 
-                        
-                        else if (rol.equalsIgnoreCase("Vendedor")) {
-                            // 1. Le pasamos el idVendedor entre los paréntesis
-                            versionbeta.PanelVentasB ventas = new versionbeta.PanelVentasB(idVendedor);
-                            
-                            if (this.jefe != null) {
-                                this.jefe.jDesktopPane1.add(ventas); 
-                                ventas.setVisible(true);
-                                
-                                int x = (this.jefe.jDesktopPane1.getWidth() - ventas.getWidth()) / 2;
-                                int y = (this.jefe.jDesktopPane1.getHeight() - ventas.getHeight()) / 2;
-                                ventas.setLocation(x, y);
-                            } else {
-                                ventas.setVisible(true);
-                            }
+                            int x = (this.jefe.jDesktopPane1.getWidth() - admin.getWidth()) / 2;
+                            int y = (this.jefe.jDesktopPane1.getHeight() - admin.getHeight()) / 2;
+                            admin.setLocation(x, y);
+                        } else {
+                            admin.setVisible(true);
                         }
-                        else if (rol.equalsIgnoreCase("Cliente")) {
-                          
-                            VentanaProductos tienda = new VentanaProductos();
-                            tienda.setVisible(true);
-                        } 
-                        else {
-                            JOptionPane.showMessageDialog(this, "Error: El rol '" + rol + "' no está registrado en el sistema.", "Rol no reconocido", JOptionPane.ERROR_MESSAGE);
-                            return;
+
+                    } else if (rol.equalsIgnoreCase("Vendedor")) {
+
+                        JOptionPane.showMessageDialog(this, "¡Bienvenido, " + userText + "!");
+                        versionbeta.VentanaVentasB ventas = new versionbeta.VentanaVentasB(idVendedor);
+                        
+                        if (this.jefe != null) {
+                            this.jefe.jDesktopPane1.add(ventas); 
+                            ventas.setVisible(true);
+                            int x = (this.jefe.jDesktopPane1.getWidth() - ventas.getWidth()) / 2;
+                            int y = (this.jefe.jDesktopPane1.getHeight() - ventas.getHeight()) / 2;
+                            ventas.setLocation(x, y);
+                        } else {
+                            ventas.setVisible(true);
                         }
-                        
-                        this.dispose(); 
-                        
+
+                    } else if (rol.equalsIgnoreCase("Cliente")) {
+
+                        JOptionPane.showMessageDialog(this, "¡Bienvenido, " + userText + "!");
+                        intento.VentanaProductos tienda = new intento.VentanaProductos();
+                        tienda.setVisible(true);
+                        tienda.setLocationRelativeTo(null);
+
                     } else {
-                        JOptionPane.showMessageDialog(this, "Esta cuenta se encuentra inactiva.", "Acceso denegado", JOptionPane.WARNING_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Lo sentimos, tu perfil no cuenta con permisos de acceso.", "Acceso no autorizado", JOptionPane.WARNING_MESSAGE);
+                        return;
                     }
+                    
+                    this.dispose(); 
+                    
                 } else {
-                    JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos. Intenta de nuevo.", "Error de credenciales", JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Esta cuenta se encuentra temporalmente inactiva.", "Acceso denegado", JOptionPane.WARNING_MESSAGE);
                 }
-            }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error en la base de datos: " + e.getMessage(), "Error SQL", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            try {
-                if (con != null) con.close(); 
-            } catch (SQLException ex) {
-                System.out.println("Error al cerrar conexión: " + ex.getMessage());
+            } else {
+                JOptionPane.showMessageDialog(this, "El usuario o la contraseña no coinciden.", "Datos incorrectos", JOptionPane.ERROR_MESSAGE);
             }
         }
+    } catch (SQLException e) {
+        JOptionPane.showMessageDialog(this, "Ocurrió un problema al procesar tu solicitud. Inténtalo más tarde.", "Error de sistema", JOptionPane.ERROR_MESSAGE);
+    } finally {
+        try {
+            if (con != null) con.close(); 
+        } catch (SQLException ex) {
+            System.out.println("Error al cerrar conexión: " + ex.getMessage());
+        }
+    }
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed
@@ -283,10 +293,15 @@ boolean passVisible = false;
     }//GEN-LAST:event_txtUsuarioActionPerformed
 
     private void lblOlvideContrasenaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblOlvideContrasenaMouseClicked
-    VentanaRecuperar paso1 = new VentanaRecuperar();
-    paso1.setVisible(true);
+    javax.swing.JDesktopPane desktop = this.getDesktopPane();
+    if (desktop != null) {
+        versionbeta.VentanaRecuperarB paso1 = new versionbeta.VentanaRecuperarB();
+        desktop.add(paso1);
+        paso1.setVisible(true);
+        paso1.setSize(470, 310);
+        paso1.setLocation((desktop.getWidth() - paso1.getWidth()) / 2, (desktop.getHeight() - paso1.getHeight()) / 2);
+    }
     this.dispose();  
-        // TODO add your handling code here:
     }//GEN-LAST:event_lblOlvideContrasenaMouseClicked
 
     private void lblVerContraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblVerContraMouseClicked
