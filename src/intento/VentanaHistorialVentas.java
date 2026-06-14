@@ -550,7 +550,7 @@ if (idPedidoSeleccionado == -1) {
     }//GEN-LAST:event_btnAceptarPedidoActionPerformed
 
     private void btnRechazarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRechazarPedidoActionPerformed
- if (idPedidoSeleccionado == -1) {
+  if (idPedidoSeleccionado == -1) {
         JOptionPane.showMessageDialog(this, "Selecciona primero un pedido.");
         return;
     }
@@ -594,7 +594,6 @@ if (idPedidoSeleccionado == -1) {
                 "Error al rechazar pedido: " + e.getMessage()
         );
     }
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnRechazarPedidoActionPerformed
 
     private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
@@ -602,7 +601,6 @@ if (idPedidoSeleccionado == -1) {
     ventana.setVisible(true);
     ventana.setLocationRelativeTo(null);
     this.dispose();
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnRegistroProductosActionPerformed
 
     private void btnHistorialVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialVentasActionPerformed

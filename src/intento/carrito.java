@@ -9,8 +9,8 @@ package intento;
  * @author ErickJimz
  */
 public class carrito extends javax.swing.JFrame {
-    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(carrito.class.getName());
+    private int idUsuarioActual;
 
     /**
      * Creates new form carrito
@@ -19,25 +19,34 @@ public class carrito extends javax.swing.JFrame {
         initComponents();
         cargarProductosAlCarrito();
     }
+
+    /**
+     * Constructor sobrecargado para recibir el ID del usuario activo
+     */
+    public carrito(int idUsuarioActual) {
+        this.idUsuarioActual = idUsuarioActual;
+        initComponents();
+        cargarProductosAlCarrito();
+    }
 public void cargarProductosAlCarrito() {
     // 1. Limpiamos el contenedor para evitar que se dupliquen si el método se vuelve a llamar
-    panelContenedor.removeAll();
-    
-    // 2. Simulamos un ciclo para los productos agregados (aquí usarás tus datos reales más adelante)
-    // Por ejemplo, haremos que aparezcan 3 productos para probar el scroll
-    for (int i = 0; i < 3; i++) {
+        panelContenedor.removeAll();
         
-        // 3. Instanciamos tu clase molde JPanel
-        PanelCarrito tarjeta = new PanelCarrito();
+        // 2. Simulamos un ciclo para los productos agregados (aquí usarás tus datos reales más adelante)
+        // Por ejemplo, haremos que aparezcan 3 productos para probar el scroll
+        for (int i = 0; i < 3; i++) {
+            
+            // 3. Instanciamos tu clase molde JPanel
+            PanelCarrito tarjeta = new PanelCarrito();
+            
+            // 4. La añadimos al panel que tiene el BoxLayout
+            panelContenedor.add(tarjeta);
+        }
         
-        // 4. La añadimos al panel que tiene el BoxLayout
-        panelContenedor.add(tarjeta);
+        // 5. ¡SÚPER IMPORTANTE! Le avisamos a Swing que recalculamos la interfaz
+        panelContenedor.revalidate();
+        panelContenedor.repaint();
     }
-    
-    // 5. ¡SÚPER IMPORTANTE! Le avisamos a Swing que recalculamos la interfaz
-    panelContenedor.revalidate();
-    panelContenedor.repaint();
-}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -159,7 +168,7 @@ public void cargarProductosAlCarrito() {
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
+try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());

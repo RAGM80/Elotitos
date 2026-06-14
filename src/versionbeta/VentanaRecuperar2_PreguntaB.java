@@ -16,7 +16,7 @@ import javax.swing.JOptionPane;
  * @author rafhi
  */
 public class VentanaRecuperar2_PreguntaB extends javax.swing.JInternalFrame {
-public String usuarioActual = "";   
+public String usuarioActual = "";
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaRecuperar2_PreguntaB.class.getName());
 
     /**

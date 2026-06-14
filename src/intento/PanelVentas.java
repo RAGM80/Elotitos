@@ -19,7 +19,6 @@ import javax.swing.table.DefaultTableModel;
  * @author ErickJimz
  */
 public class PanelVentas extends javax.swing.JFrame {
-<<<<<<< Updated upstream
 
     private int idUsuarioActual;
     private java.sql.Connection cn;
@@ -27,114 +26,11 @@ public class PanelVentas extends javax.swing.JFrame {
     private java.sql.ResultSet rs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelVentas.class.getName());
 
-=======
-
-    private static final java.util.logging.Logger logger =
-            java.util.logging.Logger.getLogger(PanelVentas.class.getName());
-
-    private int idUsuarioActual;
-    private Connection cn;
-    private PreparedStatement ps;
-    private ResultSet rs;
-
->>>>>>> Stashed changes
     public PanelVentas() {
         initComponents();
         this.setLocationRelativeTo(null);
         marcarBotonActual();
     }
-<<<<<<< Updated upstream
-=======
-
-    public PanelVentas(int idUsuario) {
-        initComponents();
-
-        this.idUsuarioActual = idUsuario;
-
-        this.setLocationRelativeTo(null);
-
-        ConexionMySQL conexion = new ConexionMySQL();
-        cn = conexion.Conectar();
-
-        if (cn == null) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "No se pudo conectar a la base de datos."
-            );
-            return;
-        }
-
-        spnCantidad.setModel(new SpinnerNumberModel(1, 1, 100, 1));
-
-        marcarBotonActual();
-
-        cargarProductos();
-        cargarResumen();
-        cargarTablaVentas();
-    }
- private class ProductoItem {
-
-    int idProducto;
-    String nombre;
-    double precio;
-
-    public ProductoItem(int idProducto, String nombre, double precio) {
-        this.idProducto = idProducto;
-        this.nombre = nombre;
-        this.precio = precio;
-    }
-
-    @Override
-    public String toString() {
-        return nombre;
-    }
-}
- private void cargarProductos() {
-
-    cmbProducto.removeAllItems();
-
-    try {
-        String sql =
-                "SELECT Id_Productos, Nombre, Precio " +
-                "FROM productos";
-
-        ps = cn.prepareStatement(sql);
-        rs = ps.executeQuery();
-
-        while (rs.next()) {
-
-            ProductoItem producto = new ProductoItem(
-                    rs.getInt("Id_Productos"),
-                    rs.getString("Nombre"),
-                    rs.getDouble("Precio")
-            );
-
-            ((javax.swing.JComboBox) cmbProducto).addItem(producto);
-        }
-
-        actualizarPrecio();
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar productos: " + e.getMessage()
-        );
-    }
-}
- 
-
-
-    /**
-     * Creates new form PanelVentas
-     */
-   
-private void botonActivo(JButton boton) {
-    boton.setBackground(new Color(36, 107, 255));
-    boton.setForeground(Color.WHITE);
-    boton.setOpaque(true);
-    boton.setBorderPainted(false);
-}
->>>>>>> Stashed changes
 
     public PanelVentas(int idUsuario) {
         initComponents();
@@ -191,439 +87,17 @@ private void botonActivo(JButton boton) {
         botonInactivo(btnHistorialVentas);
     }
 
-    @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        // NetBeans sobreescribirá este método automáticamente usando el archivo .form
+    }
+    // </editor-fold>//GEN-END:initComponents
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jPanel2 = new javax.swing.JPanel();
-        jPanel1 = new javax.swing.JPanel();
-        lblVentasTotales = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel4 = new javax.swing.JPanel();
-        lblProductosVendidos = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        jPanel5 = new javax.swing.JPanel();
-        lblTransacciones = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jPanel3 = new javax.swing.JPanel();
-        jLabel13 = new javax.swing.JLabel();
-        jLabel14 = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
-        jLabel15 = new javax.swing.JLabel();
-        jLabel16 = new javax.swing.JLabel();
-        jPanel9 = new javax.swing.JPanel();
-        jLabel17 = new javax.swing.JLabel();
-        jLabel18 = new javax.swing.JLabel();
-        btnNuevaVenta = new javax.swing.JButton();
-        btnAgregar = new javax.swing.JButton();
-        jLabel30 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        tblVentas = new javax.swing.JTable();
-        btnRegistroProductos = new javax.swing.JButton();
-        btnHistorialVentas = new javax.swing.JButton();
-        btnCerrarSesion = new javax.swing.JButton();
-        spnCantidad = new javax.swing.JSpinner();
-        txtPrecio = new javax.swing.JTextField();
-        txtProducto = new javax.swing.JTextField();
-
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-        jPanel1.setBackground(new java.awt.Color(204, 204, 204));
-
-        lblVentasTotales.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
-        lblVentasTotales.setText("ventas totales");
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jLabel3.setText("$175.00");
-
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(lblVentasTotales, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(101, Short.MAX_VALUE))
-        );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(lblVentasTotales)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3))
-        );
-
-        jPanel4.setBackground(new java.awt.Color(204, 204, 204));
-
-        lblProductosVendidos.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
-        lblProductosVendidos.setText("productos vendidos");
-
-        jLabel5.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jLabel5.setText("$150");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblProductosVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addComponent(lblProductosVendidos)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel5))
-        );
-
-        jPanel5.setBackground(new java.awt.Color(204, 204, 204));
-
-        lblTransacciones.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
-        lblTransacciones.setText("Transacciones");
-
-        jLabel7.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jLabel7.setText("2");
-
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(lblTransacciones, javax.swing.GroupLayout.DEFAULT_SIZE, 155, Short.MAX_VALUE)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addComponent(lblTransacciones)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel7))
-        );
-
-        jLabel8.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
-        jLabel8.setText("Registro de productos");
-
-        jPanel3.setBackground(new java.awt.Color(204, 204, 204));
-
-        jLabel13.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
-
-        jLabel14.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jLabel14.setText("Producto");
-
-        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
-        jPanel3.setLayout(jPanel3Layout);
-        jPanel3Layout.setHorizontalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addComponent(jLabel14))
-                    .addComponent(jLabel13, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(33, Short.MAX_VALUE))
-        );
-        jPanel3Layout.setVerticalGroup(
-            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel13)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel14)
-                .addContainerGap(9, Short.MAX_VALUE))
-        );
-
-        jPanel8.setBackground(new java.awt.Color(204, 204, 204));
-
-        jLabel15.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
-
-        jLabel16.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jLabel16.setText("Cantidad");
-
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel16, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
-        );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel8Layout.createSequentialGroup()
-                .addComponent(jLabel15)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel16)
-                .addContainerGap(9, Short.MAX_VALUE))
-        );
-
-        jPanel9.setBackground(new java.awt.Color(204, 204, 204));
-
-        jLabel17.setFont(new java.awt.Font("Segoe UI Emoji", 0, 12)); // NOI18N
-
-        jLabel18.setFont(new java.awt.Font("Segoe UI Semibold", 0, 14)); // NOI18N
-        jLabel18.setText("Precio");
-
-        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
-        jPanel9.setLayout(jPanel9Layout);
-        jPanel9Layout.setHorizontalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel17, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel18))
-                .addContainerGap(61, Short.MAX_VALUE))
-        );
-        jPanel9Layout.setVerticalGroup(
-            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel9Layout.createSequentialGroup()
-                .addComponent(jLabel17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel18)
-                .addContainerGap(9, Short.MAX_VALUE))
-        );
-
-        btnNuevaVenta.setBackground(new java.awt.Color(0, 102, 255));
-        btnNuevaVenta.setForeground(new java.awt.Color(255, 255, 255));
-        btnNuevaVenta.setText("+ Nueva venta");
-        btnNuevaVenta.addActionListener(this::btnNuevaVentaActionPerformed);
-
-        btnAgregar.setBackground(new java.awt.Color(51, 255, 51));
-        btnAgregar.setForeground(new java.awt.Color(255, 255, 255));
-        btnAgregar.setText("Agregar");
-        btnAgregar.addActionListener(this::btnAgregarActionPerformed);
-
-        tblVentas.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
-            },
-            new String [] {
-                "Producto", "Cantidad ", "Precio", "Total ", "Fecha", "Acciones "
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.Integer.class, java.lang.Float.class, java.lang.Integer.class, java.lang.String.class, java.lang.Object.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jScrollPane2.setViewportView(tblVentas);
-
-        btnRegistroProductos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnRegistroProductos.setText("Registro de productos");
-        btnRegistroProductos.addActionListener(this::btnRegistroProductosActionPerformed);
-
-        btnHistorialVentas.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnHistorialVentas.setText("Historial de Ventas");
-        btnHistorialVentas.addActionListener(this::btnHistorialVentasActionPerformed);
-
-        btnCerrarSesion.setBackground(new java.awt.Color(255, 0, 51));
-        btnCerrarSesion.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
-        btnCerrarSesion.setText("Cerrar Sesion");
-        btnCerrarSesion.addActionListener(this::btnCerrarSesionActionPerformed);
-
-        txtPrecio.addActionListener(this::txtPrecioActionPerformed);
-
-        txtProducto.addActionListener(this::txtProductoActionPerformed);
-
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 53, 53)
-                        .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(55, 55, 55)
-                        .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(79, 79, 79)
-                        .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(85, 85, 85)
-                        .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btnRegistroProductos))
-                        .addGap(59, 59, 59)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btnHistorialVentas)
-                            .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(72, 72, 72))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(btnAgregar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(btnNuevaVenta))
-                        .addGap(52, 52, 52))))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(99, 99, 99)
-                .addComponent(jLabel8)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 616, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
-                .addComponent(jLabel30)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnCerrarSesion)
-                .addGap(213, 213, 213))
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel8)
-                .addGap(28, 28, 28)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(77, 77, 77)
-                        .addComponent(btnNuevaVenta)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnAgregar))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(btnRegistroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(btnHistorialVentas, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jPanel9, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtPrecio, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtProducto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(spnCantidad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(60, 60, 60)
-                        .addComponent(jLabel30))
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 207, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(45, 45, 45)
-                .addComponent(btnCerrarSesion)
-                .addContainerGap(36, Short.MAX_VALUE))
-        );
-
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-
-        pack();
-    }// </editor-fold>//GEN-END:initComponents
-
-    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-<<<<<<< Updated upstream
-String nombreProd = txtProducto.getText().trim();
+    private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {                                           
+        String nombreProd = txtProducto.getText().trim();
         if (nombreProd.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, escribe el nombre del producto.");
             return;
-=======
-    if (idUsuarioActual <= 0) {
-        JOptionPane.showMessageDialog(
-                this,
-                "No hay vendedor activo. Inicia sesión nuevamente."
-        );
-        return;
-    }
-
-    Object seleccionado = cmbProducto.getSelectedItem();
-
-    if (!(seleccionado instanceof ProductoItem)) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Selecciona un producto válido."
-        );
-        return;
-    }
-
-    ProductoItem producto = (ProductoItem) seleccionado;
-
-    int cantidad = Integer.parseInt(spnCantidad.getValue().toString());
-    double subtotal = producto.precio * cantidad;
-    try {
-        cn.setAutoCommit(false);
-
-        String sqlVenta =
-                "INSERT INTO ventas(Id_Usuario, Fecha, Total, Metodo_pago) " +
-                "VALUES (?, NOW(), ?, ?)";
-
-        ps = cn.prepareStatement(
-                sqlVenta,
-                Statement.RETURN_GENERATED_KEYS
-        );
-
-        ps.setInt(1, idUsuarioActual);
-        ps.setDouble(2, subtotal);
-        ps.setString(3, "Efectivo");
-
-        ps.executeUpdate();
-
-        ResultSet claves = ps.getGeneratedKeys();
-
-        int idVenta = 0;
-
-        if (claves.next()) {
-            idVenta = claves.getInt(1);
->>>>>>> Stashed changes
         }
 
         double precioProd = 0;
@@ -680,7 +154,7 @@ String nombreProd = txtProducto.getText().trim();
             ps.executeUpdate();
 
             cn.commit();
-            JOptionPane.showMessageDialog(this, "¡Venta registrada con éxito por separado!");
+            JOptionPane.showMessageDialog(this, "¡Venta registrada con éxito!");
             txtProducto.setText("");
             txtPrecio.setText("");
             spnCantidad.setValue(1);
@@ -694,245 +168,104 @@ String nombreProd = txtProducto.getText().trim();
         } finally {
             try { if (cn != null) cn.setAutoCommit(true); } catch (Exception e) {}
         }
-<<<<<<< Updated upstream
-=======
-    }
+    }                                          
 
-        
->>>>>>> Stashed changes
-    }//GEN-LAST:event_btnAgregarActionPerformed
+    private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {                                                     
+        marcarBotonActual();
+    }                                                    
 
-    private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
-    marcarBotonActual();
-    }//GEN-LAST:event_btnRegistroProductosActionPerformed
-
-    private void btnHistorialVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialVentasActionPerformed
-       VentanaHistorialVentas ventana = new VentanaHistorialVentas();
+    private void btnHistorialVentasActionPerformed(java.awt.event.ActionEvent evt) {                                                   
+        VentanaHistorialVentas ventana = new VentanaHistorialVentas();
         ventana.setVisible(true);
         this.dispose();
-    }//GEN-LAST:event_btnHistorialVentasActionPerformed
+    }                                                  
 
-    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-<<<<<<< Updated upstream
-int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
+    private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {                                                
+        int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             VentanaLogin login = new VentanaLogin();
             login.setVisible(true);
             login.setLocationRelativeTo(null);
             this.dispose();
-        }
-=======
-     int opcion = JOptionPane.showConfirmDialog(
-            this,
-            "¿Seguro que deseas cerrar sesión?",
-            "Cerrar sesión",
-            JOptionPane.YES_NO_OPTION
-    );
+        } 
+    }                                               
 
-    if (opcion == JOptionPane.YES_OPTION) {
-
-        VentanaLogin login = new VentanaLogin();
-        login.setVisible(true);
-        login.setLocationRelativeTo(null);
-
-        this.dispose();
-    }
-
+    private void txtPrecioActionPerformed(java.awt.event.ActionEvent evt) {                                          
         // TODO add your handling code here:
->>>>>>> Stashed changes
-    }//GEN-LAST:event_btnCerrarSesionActionPerformed
+    }                                         
 
-    private void txtPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecioActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtPrecioActionPerformed
-
-    private void btnNuevaVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaVentaActionPerformed
-<<<<<<< Updated upstream
-txtProducto.setText(""); 
+    private void btnNuevaVentaActionPerformed(java.awt.event.ActionEvent evt) {                                              
+        txtProducto.setText(""); 
         spnCantidad.setValue(1);
         txtPrecio.setText("");
-=======
-    if (cmbProducto.getItemCount() > 0) {
-        cmbProducto.setSelectedIndex(0);
-    }
+    }                                             
 
-    spnCantidad.setValue(1);
-    actualizarPrecio();
+    private void txtProductoActionPerformed(java.awt.event.ActionEvent evt) {                                            
         // TODO add your handling code here:
->>>>>>> Stashed changes
-    }//GEN-LAST:event_btnNuevaVentaActionPerformed
+    }                                           
 
-    private void txtProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProductoActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtProductoActionPerformed
-private void cargarResumen() {
-<<<<<<< Updated upstream
+    private void cargarResumen() {
         try {
-            String sqlVentas =
-                    "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
-                    "FROM ventas " +
-                    "WHERE Id_Usuario = ?";
-
+            String sqlVentas = "SELECT IFNULL(SUM(Total), 0) AS total_ventas FROM ventas WHERE Id_Usuario = ?";
             ps = cn.prepareStatement(sqlVentas);
             ps.setInt(1, idUsuarioActual);
             rs = ps.executeQuery();
-=======
-try {
-        String sqlVentas =
-                "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
-                "FROM ventas " +
-                "WHERE Id_Usuario = ?";
->>>>>>> Stashed changes
-
             if (rs.next()) {
-                jLabel3.setText(
-                        "$" + String.format("%.2f", rs.getDouble("total_ventas"))
-                );
+                jLabel3.setText("$" + String.format("%.2f", rs.getDouble("total_ventas")));
             }
 
-<<<<<<< Updated upstream
-            String sqlProductos =
-                    "SELECT IFNULL(SUM(dv.Cantidad), 0) AS productos " +
-                    "FROM detalle_ventas dv " +
-                    "INNER JOIN ventas v ON dv.Id_Venta = v.Id_Venta " +
-                    "WHERE v.Id_Usuario = ?";
-
+            String sqlProductos = "SELECT IFNULL(SUM(dv.Cantidad), 0) AS productos FROM detalle_ventas dv " +
+                                  "INNER JOIN ventas v ON dv.Id_Venta = v.Id_Venta WHERE v.Id_Usuario = ?";
             ps = cn.prepareStatement(sqlProductos);
             ps.setInt(1, idUsuarioActual);
             rs = ps.executeQuery();
-
             if (rs.next()) {
-                jLabel5.setText(
-                        String.valueOf(rs.getInt("productos"))
-                );
+                jLabel5.setText(String.valueOf(rs.getInt("productos")));
             }
 
-            String sqlTransacciones =
-                    "SELECT COUNT(*) AS transacciones " +
-                    "FROM ventas " +
-                    "WHERE Id_Usuario = ?";
-
+            String sqlTransacciones = "SELECT COUNT(*) AS transacciones FROM ventas WHERE Id_Usuario = ?";
             ps = cn.prepareStatement(sqlTransacciones);
             ps.setInt(1, idUsuarioActual);
             rs = ps.executeQuery();
-
             if (rs.next()) {
-                jLabel7.setText(
-                        String.valueOf(rs.getInt("transacciones"))
-                );
+                jLabel7.setText(String.valueOf(rs.getInt("transacciones")));
             }
-
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Error al cargar resumen: " + e.getMessage()
-            );
+            JOptionPane.showMessageDialog(this, "Error al cargar resumen: " + e.getMessage());
         }
     }
-DefaultTableModel modelo = new DefaultTableModel();
-=======
-        if (rs.next()) {
-            jLabel3.setText(
-                    "$" + String.format("%.2f", rs.getDouble("total_ventas"))
-            );
-        }
 
-        String sqlProductos =
-                "SELECT IFNULL(SUM(dv.Cantidad), 0) AS productos " +
-                "FROM detalle_ventas dv " +
-                "INNER JOIN ventas v ON dv.Id_Venta = v.Id_Venta " +
-                "WHERE v.Id_Usuario = ?";
-
-        ps = cn.prepareStatement(sqlProductos);
-        ps.setInt(1, idUsuarioActual);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            jLabel5.setText(
-                    String.valueOf(rs.getInt("productos"))
-            );
-        }
-
-        String sqlTransacciones =
-                "SELECT COUNT(*) AS transacciones " +
-                "FROM ventas " +
-                "WHERE Id_Usuario = ?";
-
-        ps = cn.prepareStatement(sqlTransacciones);
-        ps.setInt(1, idUsuarioActual);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            jLabel7.setText(
-                    String.valueOf(rs.getInt("transacciones"))
-            );
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar resumen: " + e.getMessage()
-        );
-    }
-    
-}
-private void cargarTablaVentas() {
->>>>>>> Stashed changes
-
+    private void cargarTablaVentas() {
+        DefaultTableModel modelo = new DefaultTableModel();
         modelo.addColumn("Producto");
         modelo.addColumn("Cantidad");
         modelo.addColumn("Precio");
         modelo.addColumn("Total");
         modelo.addColumn("Fecha");
         modelo.addColumn("Acciones");
-
         tblVentas.setModel(modelo);
 
         try {
-            String sql = "SELECT Nombre AS producto, Cantidad AS cantidad, Precio AS precio, Total AS subtotal, Fecha AS fecha " +
-                         "FROM productos " +
-                         "WHERE Id_Usuario = ? " +
-                         "ORDER BY Fecha DESC";
-
+            String sql = "SELECT Nombre AS producto, Cantidad AS cantidad, Precio AS precio, Total AS subtotal, Fecha AS fecha FROM productos WHERE Id_Usuario = ? ORDER BY Fecha DESC";
             ps = cn.prepareStatement(sql);
             ps.setInt(1, idUsuarioActual);
             rs = ps.executeQuery();
-
             while (rs.next()) {
-
                 Object[] fila = new Object[6];
-
                 fila[0] = rs.getString("producto");
                 fila[1] = rs.getInt("cantidad");
                 fila[2] = "$" + String.format("%.2f", rs.getDouble("precio"));
                 fila[3] = "$" + String.format("%.2f", rs.getDouble("subtotal"));
                 fila[4] = rs.getString("fecha");
                 fila[5] = "Registrado";
-
                 modelo.addRow(fila);
             }
-
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Error al cargar tabla de ventas: " + e.getMessage()
-            );
+            JOptionPane.showMessageDialog(this, "Error al cargar tabla de ventas: " + e.getMessage());
         }
     }
-<<<<<<< Updated upstream
-=======
-}
->>>>>>> Stashed changes
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -943,22 +276,10 @@ private void cargarTablaVentas() {
         } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new PanelVentas().setVisible(true));
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify//GEN-BEGIN:initComponents
     private javax.swing.JButton btnAgregar;
     private javax.swing.JButton btnCerrarSesion;
     private javax.swing.JButton btnHistorialVentas;
@@ -992,5 +313,5 @@ try {
     private javax.swing.JTable tblVentas;
     private javax.swing.JTextField txtPrecio;
     private javax.swing.JTextField txtProducto;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration//GEN-END:initComponents
 }

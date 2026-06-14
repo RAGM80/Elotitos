@@ -198,7 +198,7 @@ boolean passVisible = false;
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
     String userText = txtUsuario.getText().trim();
-    String passText = pwdContraseña1.getText().trim(); 
+    String passText = pwdContraseña1.getText().trim();
     
     if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
         passText.isEmpty() || passText.equals("ingresa tu contraseña")) {
