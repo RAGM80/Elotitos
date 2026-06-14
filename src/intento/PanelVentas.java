@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
  * @author ErickJimz
  */
 public class PanelVentas extends javax.swing.JFrame {
+
     private int idUsuarioActual;
     private java.sql.Connection cn;
     private java.sql.PreparedStatement ps;
@@ -66,6 +67,7 @@ public class PanelVentas extends javax.swing.JFrame {
             return nombre;
         }
     }
+
     private void botonActivo(JButton boton) {
         boton.setBackground(new Color(36, 107, 255));
         boton.setForeground(Color.WHITE);
@@ -465,7 +467,7 @@ public class PanelVentas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-   String nombreProd = txtProducto.getText().trim();
+String nombreProd = txtProducto.getText().trim();
         if (nombreProd.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, escribe el nombre del producto.");
             return;
@@ -546,19 +548,19 @@ public class PanelVentas extends javax.swing.JFrame {
     }//GEN-LAST:event_btnRegistroProductosActionPerformed
 
     private void btnHistorialVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialVentasActionPerformed
-        VentanaHistorialVentas ventana = new VentanaHistorialVentas();
+       VentanaHistorialVentas ventana = new VentanaHistorialVentas();
         ventana.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnHistorialVentasActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-    int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
+int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             VentanaLogin login = new VentanaLogin();
             login.setVisible(true);
             login.setLocationRelativeTo(null);
             this.dispose();
-        } 
+        }
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void txtPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecioActionPerformed
@@ -566,113 +568,112 @@ public class PanelVentas extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPrecioActionPerformed
 
     private void btnNuevaVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaVentaActionPerformed
-    txtProducto.setText(""); 
-    spnCantidad.setValue(1);
-    txtPrecio.setText("");
+txtProducto.setText(""); 
+        spnCantidad.setValue(1);
+        txtPrecio.setText("");
     }//GEN-LAST:event_btnNuevaVentaActionPerformed
 
     private void txtProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProductoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProductoActionPerformed
 private void cargarResumen() {
+        try {
+            String sqlVentas =
+                    "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
+                    "FROM ventas " +
+                    "WHERE Id_Usuario = ?";
 
-    try {
-        String sqlVentas =
-                "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
-                "FROM ventas " +
-                "WHERE Id_Usuario = ?";
+            ps = cn.prepareStatement(sqlVentas);
+            ps.setInt(1, idUsuarioActual);
+            rs = ps.executeQuery();
 
-        ps = cn.prepareStatement(sqlVentas);
-        ps.setInt(1, idUsuarioActual);
-        rs = ps.executeQuery();
+            if (rs.next()) {
+                jLabel3.setText(
+                        "$" + String.format("%.2f", rs.getDouble("total_ventas"))
+                );
+            }
 
-        if (rs.next()) {
-            lblVentasTotales.setText(
-                    "$" + String.format("%.2f", rs.getDouble("total_ventas"))
+            String sqlProductos =
+                    "SELECT IFNULL(SUM(dv.Cantidad), 0) AS productos " +
+                    "FROM detalle_ventas dv " +
+                    "INNER JOIN ventas v ON dv.Id_Venta = v.Id_Venta " +
+                    "WHERE v.Id_Usuario = ?";
+
+            ps = cn.prepareStatement(sqlProductos);
+            ps.setInt(1, idUsuarioActual);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                jLabel5.setText(
+                        String.valueOf(rs.getInt("productos"))
+                );
+            }
+
+            String sqlTransacciones =
+                    "SELECT COUNT(*) AS transacciones " +
+                    "FROM ventas " +
+                    "WHERE Id_Usuario = ?";
+
+            ps = cn.prepareStatement(sqlTransacciones);
+            ps.setInt(1, idUsuarioActual);
+            rs = ps.executeQuery();
+
+            if (rs.next()) {
+                jLabel7.setText(
+                        String.valueOf(rs.getInt("transacciones"))
+                );
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al cargar resumen: " + e.getMessage()
             );
         }
-
-        String sqlProductos =
-                "SELECT IFNULL(SUM(dv.Cantidad), 0) AS productos " +
-                "FROM detalle_ventas dv " +
-                "INNER JOIN ventas v ON dv.Id_Venta = v.Id_Venta " +
-                "WHERE v.Id_Usuario = ?";
-
-        ps = cn.prepareStatement(sqlProductos);
-        ps.setInt(1, idUsuarioActual);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            lblProductosVendidos.setText(
-                    String.valueOf(rs.getInt("productos"))
-            );
-        }
-
-        String sqlTransacciones =
-                "SELECT COUNT(*) AS transacciones " +
-                "FROM ventas " +
-                "WHERE Id_Usuario = ?";
-
-        ps = cn.prepareStatement(sqlTransacciones);
-        ps.setInt(1, idUsuarioActual);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            lblTransacciones.setText(
-                    String.valueOf(rs.getInt("transacciones"))
-            );
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar resumen: " + e.getMessage()
-        );
     }
-}
-private void cargarTablaVentas() {
 DefaultTableModel modelo = new DefaultTableModel();
 
-    modelo.addColumn("Producto");
-    modelo.addColumn("Cantidad");
-    modelo.addColumn("Precio");
-    modelo.addColumn("Total");
-    modelo.addColumn("Fecha");
-    modelo.addColumn("Acciones");
+        modelo.addColumn("Producto");
+        modelo.addColumn("Cantidad");
+        modelo.addColumn("Precio");
+        modelo.addColumn("Total");
+        modelo.addColumn("Fecha");
+        modelo.addColumn("Acciones");
 
-    tblVentas.setModel(modelo);
+        tblVentas.setModel(modelo);
 
-    try {
-        String sql = "SELECT Nombre AS producto, Cantidad AS cantidad, Precio AS precio, Total AS subtotal, Fecha AS fecha " +
-                     "FROM productos " +
-                     "WHERE Id_Usuario = ? " +
-                     "ORDER BY Fecha DESC";
+        try {
+            String sql = "SELECT Nombre AS producto, Cantidad AS cantidad, Precio AS precio, Total AS subtotal, Fecha AS fecha " +
+                         "FROM productos " +
+                         "WHERE Id_Usuario = ? " +
+                         "ORDER BY Fecha DESC";
 
-        ps = cn.prepareStatement(sql);
-        ps.setInt(1, idUsuarioActual);
-        rs = ps.executeQuery();
+            ps = cn.prepareStatement(sql);
+            ps.setInt(1, idUsuarioActual);
+            rs = ps.executeQuery();
 
-        while (rs.next()) {
+            while (rs.next()) {
 
-            Object[] fila = new Object[6];
+                Object[] fila = new Object[6];
 
-            fila[0] = rs.getString("producto");
-            fila[1] = rs.getInt("cantidad");
-            fila[2] = "$" + String.format("%.2f", rs.getDouble("precio"));
-            fila[3] = "$" + String.format("%.2f", rs.getDouble("subtotal"));
-            fila[4] = rs.getString("fecha");
-            fila[5] = "Registrado";
+                fila[0] = rs.getString("producto");
+                fila[1] = rs.getInt("cantidad");
+                fila[2] = "$" + String.format("%.2f", rs.getDouble("precio"));
+                fila[3] = "$" + String.format("%.2f", rs.getDouble("subtotal"));
+                fila[4] = rs.getString("fecha");
+                fila[5] = "Registrado";
 
-            modelo.addRow(fila);
+                modelo.addRow(fila);
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Error al cargar tabla de ventas: " + e.getMessage()
+            );
         }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar tabla de ventas: " + e.getMessage()
-        );
     }
-}
+
     /**
      * @param args the command line arguments
      */
@@ -693,7 +694,16 @@ DefaultTableModel modelo = new DefaultTableModel();
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+try {
+            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                if ("Nimbus".equals(info.getName())) {
+                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                    break;
+                }
+            }
+        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
+            logger.log(java.util.logging.Level.SEVERE, null, ex);
+        }
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new PanelVentas().setVisible(true));
     }

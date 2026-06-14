@@ -53,7 +53,7 @@
                   <EmptySpace min="-2" pref="89" max="-2" attributes="0"/>
                   <Component id="btnCarrito" min="-2" pref="158" max="-2" attributes="0"/>
                   <EmptySpace pref="115" max="32767" attributes="0"/>
-                  <Component id="btnPedidos" min="-2" pref="156" max="-2" attributes="0"/>
+                  <Component id="btnMisPedidos" min="-2" pref="156" max="-2" attributes="0"/>
                   <EmptySpace min="-2" pref="42" max="-2" attributes="0"/>
               </Group>
               <Group type="102" attributes="0">
@@ -90,7 +90,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="btnProductos" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                       <Component id="btnCarrito" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
-                      <Component id="btnPedidos" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
+                      <Component id="btnMisPedidos" alignment="3" min="-2" pref="32" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
                   <Component id="jLabel2" min="-2" pref="40" max="-2" attributes="0"/>
@@ -123,7 +123,7 @@
             <Property name="text" type="java.lang.String" value="Productos"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JButton" name="btnPedidos">
+        <Component class="javax.swing.JButton" name="btnMisPedidos">
           <Properties>
             <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="cc" green="cc" red="cc" type="rgb"/>
@@ -144,6 +144,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Carrito"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnCarritoActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
@@ -188,6 +191,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Agregar al Carrito"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAgregarCarritoActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

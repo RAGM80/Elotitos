@@ -3,13 +3,61 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package intento;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author rafhi
  */
 public class VentanaProductos extends javax.swing.JFrame {
-    
+private int idUsuarioActual;
+private Connection cn;
+private PreparedStatement ps;
+private ResultSet rs;
+
+public VentanaProductos(int idUsuario) {
+    initComponents();
+    this.idUsuarioActual = idUsuario;
+
+    this.setLocationRelativeTo(null);
+
+    ConexionMySQL conexion = new ConexionMySQL();
+    cn = conexion.Conectar();
+
+    if (cn == null) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No se pudo conectar a la base de datos."
+        );
+        return;
+    }
+
+    marcarBotonActual();
+    cargarProductos();
+}
+private void botonActivo(javax.swing.JButton boton) {
+    boton.setBackground(new java.awt.Color(36, 107, 255));
+    boton.setForeground(java.awt.Color.WHITE);
+    boton.setOpaque(true);
+    boton.setBorderPainted(false);
+}
+
+private void botonInactivo(javax.swing.JButton boton) {
+    boton.setBackground(new java.awt.Color(204, 204, 204));
+    boton.setForeground(java.awt.Color.BLACK);
+    boton.setOpaque(true);
+    boton.setBorderPainted(false);
+}
+
+private void marcarBotonActual() {
+    botonActivo(btnProductos);
+    botonInactivo(btnCarrito);
+    botonInactivo(btnMisPedidos);
+}
+
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaProductos.class.getName());
 
     /**
@@ -18,7 +66,63 @@ public class VentanaProductos extends javax.swing.JFrame {
     public VentanaProductos() {
         initComponents();
         this.setLocationRelativeTo(null);
+        ConexionMySQL conexion = new ConexionMySQL();
+    cn = conexion.Conectar();
+
+    if (cn == null) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No se pudo conectar a la base de datos."
+        );
+        return;
     }
+
+    marcarBotonActual();
+    cargarProductos();
+    }
+private void cargarProductos() {
+
+    DefaultTableModel modelo = new DefaultTableModel();
+
+    modelo.addColumn("ID");
+    modelo.addColumn("Imagen");
+    modelo.addColumn("Nombre del Producto");
+    modelo.addColumn("Precio");
+    modelo.addColumn("Disponibles");
+    modelo.addColumn("Cantidad");
+
+    tblCompras.setModel(modelo);
+
+    try {
+        String sql =
+                "SELECT Id_Productos, Nombre, Precio, Categoria " +
+                "FROM productos " +
+                "ORDER BY Nombre";
+
+        ps = cn.prepareStatement(sql);
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+
+            Object[] fila = new Object[6];
+
+            fila[0] = rs.getInt("Id_Productos");
+            fila[1] = "📦";
+            fila[2] = rs.getString("Nombre");
+            fila[3] = "$" + String.format("%.2f", rs.getDouble("Precio"));
+            fila[4] = "Disponible";
+            fila[5] = 1;
+
+            modelo.addRow(fila);
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al cargar productos: " + e.getMessage()
+        );
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -32,7 +136,7 @@ public class VentanaProductos extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         btnProductos = new javax.swing.JButton();
-        btnPedidos = new javax.swing.JButton();
+        btnMisPedidos = new javax.swing.JButton();
         btnCarrito = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -50,13 +154,14 @@ public class VentanaProductos extends javax.swing.JFrame {
         btnProductos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         btnProductos.setText("Productos");
 
-        btnPedidos.setBackground(new java.awt.Color(204, 204, 204));
-        btnPedidos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnPedidos.setText("Mis Pedidos");
+        btnMisPedidos.setBackground(new java.awt.Color(204, 204, 204));
+        btnMisPedidos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnMisPedidos.setText("Mis Pedidos");
 
         btnCarrito.setBackground(new java.awt.Color(204, 204, 204));
         btnCarrito.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         btnCarrito.setText("Carrito");
+        btnCarrito.addActionListener(this::btnCarritoActionPerformed);
 
         jLabel2.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         jLabel2.setText("Productos Disponibles");
@@ -76,6 +181,7 @@ public class VentanaProductos extends javax.swing.JFrame {
         btnAgregarCarrito.setBackground(new java.awt.Color(0, 153, 0));
         btnAgregarCarrito.setForeground(new java.awt.Color(255, 255, 255));
         btnAgregarCarrito.setText("Agregar al Carrito");
+        btnAgregarCarrito.addActionListener(this::btnAgregarCarritoActionPerformed);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -87,7 +193,7 @@ public class VentanaProductos extends javax.swing.JFrame {
                 .addGap(89, 89, 89)
                 .addComponent(btnCarrito, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE)
-                .addComponent(btnPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(btnMisPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(42, 42, 42))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,7 +222,7 @@ public class VentanaProductos extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btnCarrito, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnMisPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -142,6 +248,64 @@ public class VentanaProductos extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnAgregarCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCarritoActionPerformed
+    int fila = tblCompras.getSelectedRow();
+
+    if (fila == -1) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Selecciona un producto de la tabla."
+        );
+        return;
+    }
+
+    int idProducto = Integer.parseInt(
+            tblCompras.getValueAt(fila, 0).toString()
+    );
+
+    String nombre = tblCompras.getValueAt(fila, 2).toString();
+
+    String precioTexto = tblCompras.getValueAt(fila, 3).toString();
+    precioTexto = precioTexto.replace("$", "").trim();
+
+    double precio = Double.parseDouble(precioTexto);
+
+    int cantidad = Integer.parseInt(
+            tblCompras.getValueAt(fila, 5).toString()
+    );
+
+    if (cantidad <= 0) {
+        JOptionPane.showMessageDialog(
+                this,
+                "La cantidad debe ser mayor a 0."
+        );
+        return;
+    }
+
+    ItemCarrito item = new ItemCarrito(
+            idProducto,
+            nombre,
+            precio,
+            cantidad
+    );
+
+    CarritoTemporal.agregarProducto(item);
+
+    JOptionPane.showMessageDialog(
+            this,
+            "Producto agregado al carrito."
+    );
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAgregarCarritoActionPerformed
+
+    private void btnCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarritoActionPerformed
+    carrito ventana = new carrito(idUsuarioActual);
+    ventana.setVisible(true);
+    ventana.setLocationRelativeTo(null);
+    this.dispose();
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCarritoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -171,7 +335,7 @@ public class VentanaProductos extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAgregarCarrito;
     private javax.swing.JButton btnCarrito;
-    private javax.swing.JButton btnPedidos;
+    private javax.swing.JButton btnMisPedidos;
     private javax.swing.JButton btnProductos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

@@ -257,15 +257,14 @@ boolean passVisible = false;
 
                 } else if (rol.equalsIgnoreCase("Cliente")) {
 
-                    JOptionPane.showMessageDialog(
-                            this,
-                            "Bienvenido cliente: " + userText
-                    );
-
-                    VentanaProductos ventana = new VentanaProductos();
-                    ventana.setVisible(true);
-                    ventana.setLocationRelativeTo(null);
-                    this.dispose();
+                      JOptionPane.showMessageDialog(
+            this,
+            "Bienvenido cliente: " + userText
+    );
+    VentanaProductos ventana = new VentanaProductos(idUsuario);
+    ventana.setVisible(true);
+    ventana.setLocationRelativeTo(null);
+    this.dispose();
 
                 } else {
 
