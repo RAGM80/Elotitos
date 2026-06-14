@@ -274,7 +274,7 @@ private void cargarProductoMasVendido() {
         lblProductoMasVendido = new javax.swing.JLabel();
         lblMejorDiaVentas = new javax.swing.JLabel();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setForeground(new java.awt.Color(255, 255, 255));
@@ -379,7 +379,15 @@ private void cargarProductoMasVendido() {
             new String [] {
                 "Vendedor", "Estado", "Ventas", "Productos", "Ingresos"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane1.setViewportView(tblRendimientoVendedores);
 
         tblVendedoresMes.setModel(new javax.swing.table.DefaultTableModel(
@@ -392,7 +400,15 @@ private void cargarProductoMasVendido() {
             new String [] {
                 "Vendedor", "Ingresos"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane2.setViewportView(tblVendedoresMes);
 
         jLabel3.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N

@@ -10,36 +10,87 @@ import intento.*;
  *
  * @author ErickJimz
  */
-public class VentanaCarrito extends javax.swing.JFrame {
-    
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaCarrito.class.getName());
+public class VenatanaCarrito extends javax.swing.JInternalFrame {
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VenatanaCarrito.class.getName());
+    private int idUsuarioActual;
 
     /**
      * Creates new form carrito
      */
-    public VentanaCarrito() {
+    public VenatanaCarrito() {
         initComponents();
+        btnProductos.addActionListener(this::btnProductosActionPerformed);
+        cargarProductosAlCarrito();
+    }
+    public VenatanaCarrito(int idUsuarioActual) {
+        this.idUsuarioActual = idUsuarioActual;
+        initComponents();
+        // 🌟 Amarramos el botón en el constructor con sesión
+        btnProductos.addActionListener(this::btnProductosActionPerformed);
         cargarProductosAlCarrito();
     }
 public void cargarProductosAlCarrito() {
-    // 1. Limpiamos el contenedor para evitar que se dupliquen si el método se vuelve a llamar
-    panelContenedor.removeAll();
-    
-    // 2. Simulamos un ciclo para los productos agregados (aquí usarás tus datos reales más adelante)
-    // Por ejemplo, haremos que aparezcan 3 productos para probar el scroll
-    for (int i = 0; i < 3; i++) {
+        String[] columnas = {"Producto", "Vendedor", "Precio", "Cantidad", "Fecha"};
+        javax.swing.table.DefaultTableModel modelo = new javax.swing.table.DefaultTableModel(columnas, 0) {
+            @Override
+            public boolean isCellEditable(int row, int col) {
+                return false; 
+            }
+        };
+        jTable1.setModel(modelo);
+
+        ConexionMySQL mysql = new ConexionMySQL();
+        java.sql.Connection con = mysql.Conectar();
         
-        // 3. Instanciamos tu clase molde JPanel
-        PanelCarrito tarjeta = new PanelCarrito();
-        
-        // 4. La añadimos al panel que tiene el BoxLayout
-        panelContenedor.add(tarjeta);
+        if (con == null) return;
+
+        String sql = "SELECT p.Nombre AS producto, u.Usuario AS vendedor, p.Precio AS precio, c.Cantidad AS cantidad, c.Fecha AS fecha "
+                   + "FROM carrito c "
+                   + "INNER JOIN productos p ON c.Id_Producto = p.Id_Productos "
+                   + "INNER JOIN usuarios u ON p.Id_Usuario = u.Id_Usuario "
+                   + "WHERE c.Id_Usuario = ?";
+
+        try {
+            java.sql.PreparedStatement pst = con.prepareStatement(sql);
+            pst.setInt(1, this.idUsuarioActual); 
+            java.sql.ResultSet rs = pst.executeQuery();
+
+            while (rs.next()) {
+                Object[] fila = new Object[5];
+                fila[0] = rs.getString("producto");
+                fila[1] = rs.getString("vendedor");
+                // 💵 Ahora sí podemos mandarlo como String con "$" de forma segura
+                fila[2] = "$" + String.format("%.2f", rs.getDouble("precio")); 
+                fila[3] = rs.getInt("cantidad");
+                fila[4] = rs.getString("fecha"); 
+
+                modelo.addRow(fila);
+            }
+            con.close();
+        } catch (Exception e) {
+            System.out.println("Error al cargar carrito: " + e.getMessage());
+        }
+        actualizarTotalResumen(); 
     }
-    
-    // 5. ¡SÚPER IMPORTANTE! Le avisamos a Swing que recalculamos la interfaz
-    panelContenedor.revalidate();
-    panelContenedor.repaint();
-}
+public void actualizarTotalResumen() {
+        double granTotal = 0.0;
+        try {
+            for (int i = 0; i < jTable1.getRowCount(); i++) {
+
+                String precioTexto = jTable1.getValueAt(i, 2).toString()
+                                            .replace("$", "")
+                                            .replace(",", ".")
+                                            .trim();
+                                            
+                int cantidad = Integer.parseInt(jTable1.getValueAt(i, 3).toString());
+                granTotal += Double.parseDouble(precioTexto) * cantidad;
+            }
+        } catch (Exception e) {
+            System.out.println("Error al calcular total: " + e.getMessage());
+        }
+        jLabel7.setText(String.format("$ %.2f", granTotal)); 
+        jLabel9.setText(String.format("$ %.2f", granTotal)); 
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -52,8 +103,6 @@ public void cargarProductosAlCarrito() {
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        panelContenedor = new javax.swing.JPanel();
         btnProductos = new javax.swing.JButton();
         btnProductos1 = new javax.swing.JButton();
         btnProductos2 = new javax.swing.JButton();
@@ -66,6 +115,8 @@ public void cargarProductosAlCarrito() {
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -80,26 +131,22 @@ public void cargarProductosAlCarrito() {
         jLabel2.setText("Mi carrito");
         jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(44, 103, -1, -1));
 
-        panelContenedor.setLayout(new javax.swing.BoxLayout(panelContenedor, javax.swing.BoxLayout.Y_AXIS));
-        jScrollPane1.setViewportView(panelContenedor);
-
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 150, 450, 270));
-
         btnProductos.setBackground(new java.awt.Color(204, 204, 204));
         btnProductos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         btnProductos.setText("Productos");
-        jPanel1.add(btnProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(23, 39, 148, 32));
+        btnProductos.addActionListener(this::btnProductosActionPerformed);
+        jPanel1.add(btnProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 59, 148, 32));
 
         btnProductos1.setBackground(new java.awt.Color(204, 204, 204));
         btnProductos1.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnProductos1.setText("Productos");
-        jPanel1.add(btnProductos1, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 40, 148, 32));
+        btnProductos1.setText("Carrito");
+        jPanel1.add(btnProductos1, new org.netbeans.lib.awtextra.AbsoluteConstraints(274, 59, 148, 32));
 
         btnProductos2.setBackground(new java.awt.Color(204, 204, 204));
         btnProductos2.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnProductos2.setText("Productos");
+        btnProductos2.setText("Mis Pedidos");
         btnProductos2.addActionListener(this::btnProductos2ActionPerformed);
-        jPanel1.add(btnProductos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 40, 148, 32));
+        jPanel1.add(btnProductos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 59, 148, 32));
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -134,21 +181,46 @@ public void cargarProductosAlCarrito() {
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 140, 190, 280));
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Producto", "Vendedor", "Precio ", "Cantidad", "Fecha"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.Float.class, java.lang.Float.class, java.lang.Integer.class, java.lang.Object.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.setCellSelectionEnabled(true);
+        jTable1.setShowHorizontalLines(true);
+        jTable1.setShowVerticalLines(true);
+        jScrollPane1.setViewportView(jTable1);
+        jTable1.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+
+        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 139, 510, 280));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 688, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 700, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -158,16 +230,29 @@ public void cargarProductosAlCarrito() {
         // TODO add your handling code here:
     }//GEN-LAST:event_btnProductos2ActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
+    private void btnProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductosActionPerformed
+
+        javax.swing.JDesktopPane desktop = this.getDesktopPane();
+        if (desktop != null) {
+            // Instanciamos la tienda pasándole el ID de usuario actual
+            VentanaProductosB tienda = new VentanaProductosB(idUsuarioActual);
+            desktop.add(tienda);
+            tienda.setSize(this.getSize());
+            tienda.setLocation(this.getLocation());
+            tienda.setVisible(true);
+            try {
+                tienda.setSelected(true);
+            } catch (Exception e) {}
+            this.dispose(); 
+        }
+    }//GEN-LAST:event_btnProductosActionPerformed
+  public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
-        try {
+try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
@@ -180,7 +265,7 @@ public void cargarProductosAlCarrito() {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new VentanaCarrito().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new VenatanaCarrito().setVisible(true));
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -200,6 +285,7 @@ public void cargarProductosAlCarrito() {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JPanel panelContenedor;
+    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
+
 }
