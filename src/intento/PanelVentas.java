@@ -19,6 +19,7 @@ import javax.swing.table.DefaultTableModel;
  * @author ErickJimz
  */
 public class PanelVentas extends javax.swing.JFrame {
+<<<<<<< Updated upstream
 
     private int idUsuarioActual;
     private java.sql.Connection cn;
@@ -26,11 +27,114 @@ public class PanelVentas extends javax.swing.JFrame {
     private java.sql.ResultSet rs;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(PanelVentas.class.getName());
 
+=======
+
+    private static final java.util.logging.Logger logger =
+            java.util.logging.Logger.getLogger(PanelVentas.class.getName());
+
+    private int idUsuarioActual;
+    private Connection cn;
+    private PreparedStatement ps;
+    private ResultSet rs;
+
+>>>>>>> Stashed changes
     public PanelVentas() {
         initComponents();
         this.setLocationRelativeTo(null);
         marcarBotonActual();
     }
+<<<<<<< Updated upstream
+=======
+
+    public PanelVentas(int idUsuario) {
+        initComponents();
+
+        this.idUsuarioActual = idUsuario;
+
+        this.setLocationRelativeTo(null);
+
+        ConexionMySQL conexion = new ConexionMySQL();
+        cn = conexion.Conectar();
+
+        if (cn == null) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "No se pudo conectar a la base de datos."
+            );
+            return;
+        }
+
+        spnCantidad.setModel(new SpinnerNumberModel(1, 1, 100, 1));
+
+        marcarBotonActual();
+
+        cargarProductos();
+        cargarResumen();
+        cargarTablaVentas();
+    }
+ private class ProductoItem {
+
+    int idProducto;
+    String nombre;
+    double precio;
+
+    public ProductoItem(int idProducto, String nombre, double precio) {
+        this.idProducto = idProducto;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
+}
+ private void cargarProductos() {
+
+    cmbProducto.removeAllItems();
+
+    try {
+        String sql =
+                "SELECT Id_Productos, Nombre, Precio " +
+                "FROM productos";
+
+        ps = cn.prepareStatement(sql);
+        rs = ps.executeQuery();
+
+        while (rs.next()) {
+
+            ProductoItem producto = new ProductoItem(
+                    rs.getInt("Id_Productos"),
+                    rs.getString("Nombre"),
+                    rs.getDouble("Precio")
+            );
+
+            ((javax.swing.JComboBox) cmbProducto).addItem(producto);
+        }
+
+        actualizarPrecio();
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al cargar productos: " + e.getMessage()
+        );
+    }
+}
+ 
+
+
+    /**
+     * Creates new form PanelVentas
+     */
+   
+private void botonActivo(JButton boton) {
+    boton.setBackground(new Color(36, 107, 255));
+    boton.setForeground(Color.WHITE);
+    boton.setOpaque(true);
+    boton.setBorderPainted(false);
+}
+>>>>>>> Stashed changes
 
     public PanelVentas(int idUsuario) {
         initComponents();
@@ -467,10 +571,59 @@ public class PanelVentas extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
+<<<<<<< Updated upstream
 String nombreProd = txtProducto.getText().trim();
         if (nombreProd.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, escribe el nombre del producto.");
             return;
+=======
+    if (idUsuarioActual <= 0) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No hay vendedor activo. Inicia sesión nuevamente."
+        );
+        return;
+    }
+
+    Object seleccionado = cmbProducto.getSelectedItem();
+
+    if (!(seleccionado instanceof ProductoItem)) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Selecciona un producto válido."
+        );
+        return;
+    }
+
+    ProductoItem producto = (ProductoItem) seleccionado;
+
+    int cantidad = Integer.parseInt(spnCantidad.getValue().toString());
+    double subtotal = producto.precio * cantidad;
+    try {
+        cn.setAutoCommit(false);
+
+        String sqlVenta =
+                "INSERT INTO ventas(Id_Usuario, Fecha, Total, Metodo_pago) " +
+                "VALUES (?, NOW(), ?, ?)";
+
+        ps = cn.prepareStatement(
+                sqlVenta,
+                Statement.RETURN_GENERATED_KEYS
+        );
+
+        ps.setInt(1, idUsuarioActual);
+        ps.setDouble(2, subtotal);
+        ps.setString(3, "Efectivo");
+
+        ps.executeUpdate();
+
+        ResultSet claves = ps.getGeneratedKeys();
+
+        int idVenta = 0;
+
+        if (claves.next()) {
+            idVenta = claves.getInt(1);
+>>>>>>> Stashed changes
         }
 
         double precioProd = 0;
@@ -541,6 +694,12 @@ String nombreProd = txtProducto.getText().trim();
         } finally {
             try { if (cn != null) cn.setAutoCommit(true); } catch (Exception e) {}
         }
+<<<<<<< Updated upstream
+=======
+    }
+
+        
+>>>>>>> Stashed changes
     }//GEN-LAST:event_btnAgregarActionPerformed
 
     private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
@@ -554,6 +713,7 @@ String nombreProd = txtProducto.getText().trim();
     }//GEN-LAST:event_btnHistorialVentasActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
+<<<<<<< Updated upstream
 int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
         if (opcion == JOptionPane.YES_OPTION) {
             VentanaLogin login = new VentanaLogin();
@@ -561,6 +721,25 @@ int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar ses
             login.setLocationRelativeTo(null);
             this.dispose();
         }
+=======
+     int opcion = JOptionPane.showConfirmDialog(
+            this,
+            "¿Seguro que deseas cerrar sesión?",
+            "Cerrar sesión",
+            JOptionPane.YES_NO_OPTION
+    );
+
+    if (opcion == JOptionPane.YES_OPTION) {
+
+        VentanaLogin login = new VentanaLogin();
+        login.setVisible(true);
+        login.setLocationRelativeTo(null);
+
+        this.dispose();
+    }
+
+        // TODO add your handling code here:
+>>>>>>> Stashed changes
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void txtPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecioActionPerformed
@@ -568,15 +747,26 @@ int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar ses
     }//GEN-LAST:event_txtPrecioActionPerformed
 
     private void btnNuevaVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNuevaVentaActionPerformed
+<<<<<<< Updated upstream
 txtProducto.setText(""); 
         spnCantidad.setValue(1);
         txtPrecio.setText("");
+=======
+    if (cmbProducto.getItemCount() > 0) {
+        cmbProducto.setSelectedIndex(0);
+    }
+
+    spnCantidad.setValue(1);
+    actualizarPrecio();
+        // TODO add your handling code here:
+>>>>>>> Stashed changes
     }//GEN-LAST:event_btnNuevaVentaActionPerformed
 
     private void txtProductoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtProductoActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txtProductoActionPerformed
 private void cargarResumen() {
+<<<<<<< Updated upstream
         try {
             String sqlVentas =
                     "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
@@ -586,6 +776,13 @@ private void cargarResumen() {
             ps = cn.prepareStatement(sqlVentas);
             ps.setInt(1, idUsuarioActual);
             rs = ps.executeQuery();
+=======
+try {
+        String sqlVentas =
+                "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
+                "FROM ventas " +
+                "WHERE Id_Usuario = ?";
+>>>>>>> Stashed changes
 
             if (rs.next()) {
                 jLabel3.setText(
@@ -593,6 +790,7 @@ private void cargarResumen() {
                 );
             }
 
+<<<<<<< Updated upstream
             String sqlProductos =
                     "SELECT IFNULL(SUM(dv.Cantidad), 0) AS productos " +
                     "FROM detalle_ventas dv " +
@@ -632,6 +830,54 @@ private void cargarResumen() {
         }
     }
 DefaultTableModel modelo = new DefaultTableModel();
+=======
+        if (rs.next()) {
+            jLabel3.setText(
+                    "$" + String.format("%.2f", rs.getDouble("total_ventas"))
+            );
+        }
+
+        String sqlProductos =
+                "SELECT IFNULL(SUM(dv.Cantidad), 0) AS productos " +
+                "FROM detalle_ventas dv " +
+                "INNER JOIN ventas v ON dv.Id_Venta = v.Id_Venta " +
+                "WHERE v.Id_Usuario = ?";
+
+        ps = cn.prepareStatement(sqlProductos);
+        ps.setInt(1, idUsuarioActual);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            jLabel5.setText(
+                    String.valueOf(rs.getInt("productos"))
+            );
+        }
+
+        String sqlTransacciones =
+                "SELECT COUNT(*) AS transacciones " +
+                "FROM ventas " +
+                "WHERE Id_Usuario = ?";
+
+        ps = cn.prepareStatement(sqlTransacciones);
+        ps.setInt(1, idUsuarioActual);
+        rs = ps.executeQuery();
+
+        if (rs.next()) {
+            jLabel7.setText(
+                    String.valueOf(rs.getInt("transacciones"))
+            );
+        }
+
+    } catch (Exception e) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al cargar resumen: " + e.getMessage()
+        );
+    }
+    
+}
+private void cargarTablaVentas() {
+>>>>>>> Stashed changes
 
         modelo.addColumn("Producto");
         modelo.addColumn("Cantidad");
@@ -673,6 +919,10 @@ DefaultTableModel modelo = new DefaultTableModel();
             );
         }
     }
+<<<<<<< Updated upstream
+=======
+}
+>>>>>>> Stashed changes
 
     /**
      * @param args the command line arguments
