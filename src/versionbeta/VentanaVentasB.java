@@ -519,31 +519,22 @@ public class VentanaVentasB extends javax.swing.JInternalFrame {
         VentanaHistorialVentasB historial = new VentanaHistorialVentasB(this.idUsuarioActual);
         desktop.add(historial);
         historial.setVisible(true);
-        // Centrar
         historial.setLocation((desktop.getWidth() - historial.getWidth()) / 2, 
                               (desktop.getHeight() - historial.getHeight()) / 2);
-        this.dispose(); // Cierra el registro para abrir el historial
+        this.dispose(); 
     }
     }//GEN-LAST:event_btnHistorialVentasActionPerformed
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-    int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
-    if (opcion == JOptionPane.YES_OPTION) {
-        javax.swing.JDesktopPane desktop = this.getDesktopPane();
-        if (desktop != null) {
-            // Buscamos el JFrame principal (MyDesktopB) que sostiene todo
-            java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
-            MyDesktopB principal = (win instanceof MyDesktopB) ? (MyDesktopB) win : null;
-
-            // Instanciamos el login de la beta pasándole su contenedor principal
-            VentanaLoginB login = new VentanaLoginB(principal);
-            desktop.add(login);
-            login.setVisible(true);
-            login.setSize(400, 485);
-            login.setLocation((desktop.getWidth() - login.getWidth()) / 2, (desktop.getHeight() - login.getHeight()) / 2);
+if (JOptionPane.showConfirmDialog(this, "¿Seguro?") == JOptionPane.YES_OPTION) {
+        // 1. Obtener la referencia al escritorio
+        java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (win instanceof MyDesktopB) {
+            MyDesktopB principal = (MyDesktopB) win;
+            principal.mostrarLogin(); 
         }
         this.dispose();
-      }
+    }
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void txtPrecioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPrecioActionPerformed

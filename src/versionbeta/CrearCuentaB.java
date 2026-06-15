@@ -302,8 +302,8 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
         String pregunta = this.txtPregunta.getText().trim();
         String respuesta = this.txtRespuesta.getText().trim();
         if (this.cmbRol.getSelectedIndex() == -1) {
-            JOptionPane.showMessageDialog(this, "Por favor, selecciona un Rol.");
-            return;
+          JOptionPane.showMessageDialog(this, "Por favor, selecciona un Rol.");
+          return;
         }
         String rol = this.cmbRol.getSelectedItem().toString();
         if (user.isEmpty() || user.equals("Usuario") || pass.isEmpty() || 
@@ -365,7 +365,7 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_pwdConfirmarContrasenaActionPerformed
 
     private void txtApellidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtApellidoActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_txtApellidoActionPerformed
 
     private void txtNombreFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusGained
@@ -374,7 +374,6 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtNombre.setForeground(new java.awt.Color(0, 0, 0));
         }
     
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreFocusGained
 
     private void txtNombreFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtNombreFocusLost
@@ -382,7 +381,6 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtNombre.setForeground(new java.awt.Color(153, 153, 153));
             txtNombre.setText("Nombre");
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtNombreFocusLost
 
     private void txtApellidoFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoFocusGained
@@ -390,14 +388,13 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtApellido.setText("");
             txtApellido.setForeground(new java.awt.Color(0, 0, 0));
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtApellidoFocusGained
 
     private void txtApellidoFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtApellidoFocusLost
         if (txtApellido.getText().isEmpty()) {
             txtApellido.setForeground(new java.awt.Color(153, 153, 153));
             txtApellido.setText("Apellidos");
-        }        // TODO add your handling code here:
+        }       
     }//GEN-LAST:event_txtApellidoFocusLost
 
     private void txtUsuarioFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUsuarioFocusGained
@@ -405,7 +402,6 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtUsuario.setText("");
             txtUsuario.setForeground(new java.awt.Color(0, 0, 0));
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioFocusGained
 
     private void txtUsuarioFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtUsuarioFocusLost
@@ -413,15 +409,14 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtUsuario.setForeground(new java.awt.Color(153, 153, 153));
             txtUsuario.setText("Usuario");
         }
-        // TODO add your handling code here:
     }//GEN-LAST:event_txtUsuarioFocusLost
  
     private void lblVerContrasenaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblVerContrasenaMouseClicked
         if (passVisible) {
-            pwdContrasena.setEchoChar('•'); // Ocultar
+            pwdContrasena.setEchoChar('•'); 
             passVisible = false;
         } else {
-            pwdContrasena.setEchoChar((char) 0); // Mostrar contraseña
+            pwdContrasena.setEchoChar((char) 0); 
             passVisible = true;
         }
 
@@ -429,12 +424,12 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
 
     private void cmbRolFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cmbRolFocusGained
     
-        // TODO add your handling code here:
+   
     }//GEN-LAST:event_cmbRolFocusGained
 
     private void cmbRolFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_cmbRolFocusLost
     
-        // TODO add your handling code here:
+   
     }//GEN-LAST:event_cmbRolFocusLost
 
     private void txtPreguntaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPreguntaFocusGained
@@ -442,7 +437,7 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtPregunta.setText("");
             txtPregunta.setForeground(new java.awt.Color(0, 0, 0));
         }
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_txtPreguntaFocusGained
 
     private void txtPreguntaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtPreguntaFocusLost
@@ -450,7 +445,7 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtPregunta.setForeground(new java.awt.Color(153, 153, 153));
             txtPregunta.setText("Ingresa una pregunta");
         }
-        // TODO add your handling code here:
+  
     }//GEN-LAST:event_txtPreguntaFocusLost
 
     private void txtRespuestaFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRespuestaFocusGained
@@ -458,7 +453,7 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtRespuesta.setText("");
             txtRespuesta.setForeground(new java.awt.Color(0, 0, 0));
         }
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_txtRespuestaFocusGained
 
     private void txtRespuestaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtRespuestaFocusLost
@@ -466,21 +461,20 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
             txtRespuesta.setForeground(new java.awt.Color(153, 153, 153));
             txtRespuesta.setText("Ingresa la respuesta a tu pregunta");
         }
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_txtRespuestaFocusLost
 
     private void txtPreguntaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPreguntaActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_txtPreguntaActionPerformed
 
     private void cmbRolActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbRolActionPerformed
    
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_cmbRolActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
     insertarDatos();
-    // 1. Obtener los datos de los campos de texto (Ajusta los nombres de tus variables si cambian)
    
     }//GEN-LAST:event_btnGuardarActionPerformed
 

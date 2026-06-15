@@ -36,6 +36,32 @@ public class MyDesktopB extends javax.swing.JFrame {
         timer.setRepeats(false);
         timer.start();
     }
+    public void mostrarLogin() {
+    // Cierra todas las ventanas internas abiertas
+    for (javax.swing.JInternalFrame frame : jDesktopPane1.getAllFrames()) {
+        frame.dispose();
+    }
+    
+    // Vuelve a mostrar el login centrado
+    VentanaLoginB loginInterno = new VentanaLoginB(this);
+    jDesktopPane1.add(loginInterno);
+    loginInterno.setSize(400, 485);
+    loginInterno.setVisible(true);
+    
+    javax.swing.Timer timer = new javax.swing.Timer(80, new java.awt.event.ActionListener() {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            int x = (jDesktopPane1.getWidth() - loginInterno.getWidth()) / 2;
+            int y = (jDesktopPane1.getHeight() - loginInterno.getHeight()) / 2;
+            loginInterno.setLocation(x, y);
+        }
+    });
+    timer.setRepeats(false);
+    timer.start();
+    
+    jDesktopPane1.revalidate();
+    jDesktopPane1.repaint();
+}
 
     /**
      * This method is called from within the constructor to initialize the form.

@@ -41,7 +41,6 @@ public void cargarProductosAlCarrito() {
                    + "INNER JOIN productos p ON c.Id_Producto = p.Id_Productos "
                    + "INNER JOIN usuarios u ON p.Id_Usuario = u.Id_Usuario "
                    + "WHERE c.Id_Usuario = ?";
-
         try {
             java.sql.PreparedStatement pst = con.prepareStatement(sql);
             pst.setInt(1, this.idUsuarioActual); 
@@ -69,9 +68,9 @@ public void actualizarTotalResumen() {
             for (int i = 0; i < jTable1.getRowCount(); i++) {
 
                 String precioTexto = jTable1.getValueAt(i, 2).toString()
-                                            .replace("$", "")
-                                            .replace(",", ".")
-                                            .trim();
+                .replace("$", "")
+                .replace(",", ".")
+                .trim();
                                             
                 int cantidad = Integer.parseInt(jTable1.getValueAt(i, 3).toString());
                 granTotal += Double.parseDouble(precioTexto) * cantidad;
@@ -300,7 +299,6 @@ int filasCarrito = jTable1.getRowCount();
                     con.close();
                     return; 
                 }
-    
                 totalVendedor += (prec * cant);
                 cantidadVendedor += cant;
                 itemsPedido.add(new Object[]{idProd, nomProd, cant, prec});
@@ -331,13 +329,10 @@ int filasCarrito = jTable1.getRowCount();
             java.sql.PreparedStatement pstBorrar = con.prepareStatement(sqlVaciar);
             pstBorrar.setInt(1, this.idUsuarioActual);
             pstBorrar.executeUpdate();
-
             con.commit();
             con.close();
-            
             javax.swing.JOptionPane.showMessageDialog(this, "¡Tus pedidos se han enviado a los respectivos vendedores con éxito!");
             cargarProductosAlCarrito();
-
         } catch (Exception e) {
             System.out.println("Error al procesar la compra dividida: " + e.getMessage());
             try { con.rollback(); } catch (Exception ex) {}
@@ -346,7 +341,7 @@ int filasCarrito = jTable1.getRowCount();
     }//GEN-LAST:event_btnRealizarPedidoActionPerformed
 
     private void btnCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarritoActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_btnCarritoActionPerformed
   public static void main(String args[]) {
         /* Set the Nimbus look and feel */
@@ -369,7 +364,6 @@ try {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new VenatanaCarrito().setVisible(true));
     }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCarrito;
     private javax.swing.JButton btnMisPedidos;

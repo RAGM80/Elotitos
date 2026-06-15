@@ -197,7 +197,7 @@ boolean passVisible = false;
     }//GEN-LAST:event_btnCrearCuentaActionPerformed
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
-    String userText = txtUsuario.getText().trim();
+   String userText = txtUsuario.getText().trim();
         String passText = pwdContraseña1.getText().trim();
         
         if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
@@ -214,7 +214,7 @@ boolean passVisible = false;
         }
         String sql = "SELECT Id_Usuario, Estado, Rol FROM usuarios WHERE Usuario = ? AND Contrasena = ?";
         
-        try (PreparedStatement pst = con.prepareStatement(sql)) { // Elminado el 'sql1' fantasma
+        try (PreparedStatement pst = con.prepareStatement(sql)) {
             pst.setString(1, userText);
             pst.setString(2, passText);
             
@@ -254,7 +254,7 @@ boolean passVisible = false;
                         } else if (rol.equalsIgnoreCase("Cliente")) {
                             JOptionPane.showMessageDialog(this, "¡Bienvenido, " + userText + "!");
                             versionbeta.VentanaProductosB tienda = new versionbeta.VentanaProductosB(idVendedor);
-            
+                            
                             if (this.jefe != null) {
                                 this.jefe.jDesktopPane1.add(tienda); 
                                 tienda.setVisible(true);
@@ -264,9 +264,13 @@ boolean passVisible = false;
                             } else {
                                 tienda.setVisible(true);
                             }
-            
-                            this.dispose(); 
                         }
+                        if (this.jefe != null) {
+                            this.jefe.jDesktopPane1.revalidate();
+                            this.jefe.jDesktopPane1.repaint();
+                        }
+                        this.dispose(); 
+                        
                     } else {
                         JOptionPane.showMessageDialog(this, "Esta cuenta se encuentra temporalmente inactiva.", "Acceso denegado", JOptionPane.WARNING_MESSAGE);
                     }

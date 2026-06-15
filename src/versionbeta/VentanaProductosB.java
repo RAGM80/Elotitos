@@ -5,6 +5,7 @@
 package versionbeta;
 
 import intento.*;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -48,6 +49,7 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
         tblCompras = new javax.swing.JTable();
         btnAgregarCarrito = new javax.swing.JButton();
         btnCerrarSesion = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -114,14 +116,15 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
         btnAgregarCarrito.setForeground(new java.awt.Color(255, 255, 255));
         btnAgregarCarrito.setText("Agregar al Carrito");
         btnAgregarCarrito.addActionListener(this::btnAgregarCarritoActionPerformed);
-        jPanel1.add(btnAgregarCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 550, 227, -1));
+        jPanel1.add(btnAgregarCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(480, 540, 227, -1));
 
         btnCerrarSesion.setBackground(new java.awt.Color(255, 0, 0));
         btnCerrarSesion.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
         btnCerrarSesion.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrarSesion.setText("Cerrar Sesion");
         btnCerrarSesion.addActionListener(this::btnCerrarSesionActionPerformed);
-        jPanel1.add(btnCerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 550, 227, -1));
+        jPanel1.add(btnCerrarSesion, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 540, 227, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 580, 40, 20));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -140,28 +143,14 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-    int opcion = javax.swing.JOptionPane.showConfirmDialog(
-        this,
-        "¿Seguro que deseas cerrar sesión?",
-        "Cerrar sesión",
-        javax.swing.JOptionPane.YES_NO_OPTION
-    );
-    if (opcion == javax.swing.JOptionPane.YES_OPTION) {
-        javax.swing.JDesktopPane desktop = this.getDesktopPane();
-        if (desktop != null) {
-            desktop.removeAll(); 
-            java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
-            MyDesktopB principal = (win instanceof MyDesktopB) ? (MyDesktopB) win : null;
-            VentanaLoginB login = new VentanaLoginB(principal);
-            desktop.add(login);
-            login.setVisible(true);
-            login.setSize(400, 485);
-            int x = (desktop.getWidth() - login.getWidth()) / 2;
-            int y = (desktop.getHeight() - login.getHeight()) / 2;
-            login.setLocation(x, y);
-            desktop.repaint(); 
+    if (JOptionPane.showConfirmDialog(this, "¿Seguro?") == JOptionPane.YES_OPTION) {
+        java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
+        if (win instanceof MyDesktopB) {
+            MyDesktopB principal = (MyDesktopB) win;
+            principal.mostrarLogin(); 
         }
-      }
+        this.dispose();
+    }
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void btnAgregarCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCarritoActionPerformed
@@ -176,8 +165,6 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
         String precioTexto = tblCompras.getValueAt(fila, 2).toString();
         precioTexto = precioTexto.replace("$", "").replace(",", ".").trim();
         double precio = Double.parseDouble(precioTexto);
-        
-        // 🌟 Buscamos el Id_Productos real mediante el nombre en tu base de datos
         int idProducto = 0;
         ConexionMySQL mysql = new ConexionMySQL();
         java.sql.Connection con = mysql.Conectar();
@@ -220,11 +207,8 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
     private void btnCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarritoActionPerformed
     javax.swing.JDesktopPane desktop = this.getDesktopPane();
         if (desktop != null) {
-            // Instanciamos el carrito (usando el nombre exacto de tu archivo 'VenatanaCarrito')
             VenatanaCarrito carrito = new VenatanaCarrito(idUsuarioActual);
             desktop.add(carrito);
-            
-            // Clonamos el tamaño y posición exactos
             carrito.setSize(this.getSize());
             carrito.setLocation(this.getLocation());
             
@@ -233,7 +217,7 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
                 carrito.setSelected(true);
             } catch (Exception e) {}
             
-            this.dispose(); // Ocultamos la tienda
+            this.dispose(); 
         }
     }//GEN-LAST:event_btnCarritoActionPerformed
 
@@ -270,6 +254,7 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnProductos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable tblCompras;
@@ -300,7 +285,6 @@ public void cargarTablaProductos() {
                 Object[] fila = new Object[5];
                 fila[0] = rs.getString("producto");
                 fila[1] = rs.getString("vendedor");
-                // 💵 Volvemos a dejar el formato de String con "$" que no rompe nada
                 fila[2] = "$" + String.format("%.2f", rs.getDouble("precio")); 
                 fila[3] = rs.getInt("disponibles");
                 fila[4] = 1; 

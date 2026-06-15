@@ -128,7 +128,6 @@ public void configurarDatos(String usuario, String preguntaBD) {
                  if (respuestaText.equalsIgnoreCase(respuestaBD)) {
                      javax.swing.JDesktopPane desktop = this.getDesktopPane();
                      if (desktop != null) {
-                         // Enlazamos al Paso 3 con terminación B
                          versionbeta.VentanaRecuperar3_ExitoB paso3 = new versionbeta.VentanaRecuperar3_ExitoB(contrasenaBD); 
                          desktop.add(paso3);
                          paso3.setVisible(true);

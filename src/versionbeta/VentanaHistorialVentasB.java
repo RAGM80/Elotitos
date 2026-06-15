@@ -46,7 +46,7 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
                    + "INNER JOIN usuarios u ON p.Id_Usuario = u.Id_Usuario "
                    + "INNER JOIN detalle_pedidos dp ON p.Id_Pedido = dp.Id_Pedido "
                    + "INNER JOIN productos pr ON dp.Producto = pr.Nombre "
-                   + "WHERE pr.Id_Usuario = ? " // <--- Solo ve sus propias ventas
+                   + "WHERE pr.Id_Usuario = ? " 
                    + "GROUP BY p.Id_Pedido "
                    + "ORDER BY p.Id_Pedido DESC";
         try {
@@ -311,7 +311,6 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
         if (fila == -1) { JOptionPane.showMessageDialog(this, "Selecciona un pedido de la tabla."); return; }
 
         int idPedido = Integer.parseInt(jTable1.getValueAt(fila, 0).toString());
-
         try {
             ConexionMySQL mysql = new ConexionMySQL();
             cn = mysql.Conectar();

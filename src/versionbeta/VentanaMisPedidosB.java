@@ -149,11 +149,8 @@ public class VentanaMisPedidosB extends javax.swing.JInternalFrame {
     private void btnCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarritoActionPerformed
         javax.swing.JDesktopPane desktop = this.getDesktopPane();
         if (desktop != null) {
-            // Instanciamos el carrito (usando el nombre exacto de tu archivo 'VenatanaCarrito')
             VenatanaCarrito carrito = new VenatanaCarrito(idUsuarioActual);
             desktop.add(carrito);
-
-            // Clonamos el tamaño y posición exactos
             carrito.setSize(this.getSize());
             carrito.setLocation(this.getLocation());
 
@@ -162,7 +159,7 @@ public class VentanaMisPedidosB extends javax.swing.JInternalFrame {
                 carrito.setSelected(true);
             } catch (Exception e) {}
 
-            this.dispose(); // Ocultamos la tienda
+            this.dispose(); 
         }
     }//GEN-LAST:event_btnCarritoActionPerformed
 
@@ -189,20 +186,13 @@ public class VentanaMisPedidosB extends javax.swing.JInternalFrame {
     private void btnCerrarSesion1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesion1ActionPerformed
     int opcion = JOptionPane.showConfirmDialog(this, "¿Seguro que deseas cerrar sesión?", "Cerrar sesión", JOptionPane.YES_NO_OPTION);
     if (opcion == JOptionPane.YES_OPTION) {
-    javax.swing.JDesktopPane desktop = this.getDesktopPane();
-    if (desktop != null) {
-        // Buscamos el JFrame principal (MyDesktopB) que sostiene todo
         java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
-        MyDesktopB principal = (win instanceof MyDesktopB) ? (MyDesktopB) win : null;
-
-        // Instanciamos el login pasándole su contenedor principal
-        VentanaLoginB login = new VentanaLoginB(principal);
-        desktop.add(login);
-        login.setVisible(true);
-        login.setSize(400, 485);
-        login.setLocation((desktop.getWidth() - login.getWidth()) / 2, (desktop.getHeight() - login.getHeight()) / 2);
-    }
-    this.dispose(); // Destruye la ventana actual de pedidos
+        if (win instanceof MyDesktopB) {
+            MyDesktopB principal = (MyDesktopB) win;
+        
+            principal.mostrarLogin(); 
+        } 
+        this.dispose();
     }
     }//GEN-LAST:event_btnCerrarSesion1ActionPerformed
 
