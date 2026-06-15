@@ -37,12 +37,9 @@ public class MyDesktopB extends javax.swing.JFrame {
         timer.start();
     }
     public void mostrarLogin() {
-    // Cierra todas las ventanas internas abiertas
     for (javax.swing.JInternalFrame frame : jDesktopPane1.getAllFrames()) {
         frame.dispose();
     }
-    
-    // Vuelve a mostrar el login centrado
     VentanaLoginB loginInterno = new VentanaLoginB(this);
     jDesktopPane1.add(loginInterno);
     loginInterno.setSize(400, 485);

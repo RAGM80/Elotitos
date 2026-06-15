@@ -15,7 +15,7 @@ import javax.swing.table.DefaultTableModel;
 public class VentanaAdministrativoB extends javax.swing.JInternalFrame {
 private Connection cn;
 private PreparedStatement ps;
-private ResultSet rs;   
+private ResultSet rs;  
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaAdministrativoB.class.getName());
 
     /**

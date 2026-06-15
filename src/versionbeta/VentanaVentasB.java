@@ -527,7 +527,6 @@ public class VentanaVentasB extends javax.swing.JInternalFrame {
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
 if (JOptionPane.showConfirmDialog(this, "¿Seguro?") == JOptionPane.YES_OPTION) {
-        // 1. Obtener la referencia al escritorio
         java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
         if (win instanceof MyDesktopB) {
             MyDesktopB principal = (MyDesktopB) win;
