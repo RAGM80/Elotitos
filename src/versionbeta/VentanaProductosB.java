@@ -140,28 +140,28 @@ public class VentanaProductosB extends javax.swing.JInternalFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCerrarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesionActionPerformed
-        int opcion = javax.swing.JOptionPane.showConfirmDialog(
-            this,
-            "¿Seguro que deseas cerrar sesión?",
-            "Cerrar sesión",
-            javax.swing.JOptionPane.YES_NO_OPTION
-        );
-        if (opcion == javax.swing.JOptionPane.YES_OPTION) {
-            javax.swing.JDesktopPane desktop = this.getDesktopPane();
-            if (desktop != null) {
-                java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
-                MyDesktopB principal = (win instanceof MyDesktopB) ? (MyDesktopB) win : null;
-                VentanaLoginB login = new VentanaLoginB(principal);
-                desktop.add(login);
-                login.setVisible(true);
-                login.setSize(400, 485);
-                int x = (desktop.getWidth() - login.getWidth()) / 2;
-                int y = (desktop.getHeight() - login.getHeight()) / 2;
-                login.setLocation(x, y);
-            }
-            this.dispose();
+    int opcion = javax.swing.JOptionPane.showConfirmDialog(
+        this,
+        "¿Seguro que deseas cerrar sesión?",
+        "Cerrar sesión",
+        javax.swing.JOptionPane.YES_NO_OPTION
+    );
+    if (opcion == javax.swing.JOptionPane.YES_OPTION) {
+        javax.swing.JDesktopPane desktop = this.getDesktopPane();
+        if (desktop != null) {
+            desktop.removeAll(); 
+            java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
+            MyDesktopB principal = (win instanceof MyDesktopB) ? (MyDesktopB) win : null;
+            VentanaLoginB login = new VentanaLoginB(principal);
+            desktop.add(login);
+            login.setVisible(true);
+            login.setSize(400, 485);
+            int x = (desktop.getWidth() - login.getWidth()) / 2;
+            int y = (desktop.getHeight() - login.getHeight()) / 2;
+            login.setLocation(x, y);
+            desktop.repaint(); 
         }
-        // TODO add your handling code here:
+      }
     }//GEN-LAST:event_btnCerrarSesionActionPerformed
 
     private void btnAgregarCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarCarritoActionPerformed

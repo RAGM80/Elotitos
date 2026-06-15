@@ -3,296 +3,72 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package versionbeta;
-import intento.*;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JButton;
 
-/**
- * @author rafhi
- */
+import intento.*;
+import java.sql.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import java.util.logging.Level; 
+import java.util.logging.Logger;
+
 public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
+    
     private Connection cn;
     private PreparedStatement ps;
     private ResultSet rs;
     private int idUsuarioActual;
-    private int idPedidoSeleccionado = -1;  
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaHistorialVentasB.class.getName());
-
-    /**
-     * Constructor por defecto
-     */
-    public VentanaHistorialVentasB() {
-        initComponents();
-        marcarBotonActual();
-        inicializarConexion();
-    }
-
-    /**
-     * Constructor con el ID del vendedor para no perder la sesión
-     */
     public VentanaHistorialVentasB(int idUsuario) {
+        this.idUsuarioActual = idUsuario;
         initComponents();
-        this.idUsuarioActual = idUsuario; 
-        marcarBotonActual();
-        inicializarConexion();
-    }
-
-    /**
-     * Inicializa la base de datos y configura el scroll de los pedidos
-     */
-    private void inicializarConexion() {
-        ConexionMySQL conexion = new ConexionMySQL();
-        cn = conexion.Conectar();
-
-        if (cn == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "No se pudo conectar a la base de datos.");
-            return;
-        }
-
-        scrollPedidos.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPedidos.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        pnlPedidos.setLayout(new javax.swing.BoxLayout(pnlPedidos, javax.swing.BoxLayout.Y_AXIS));
-
-        cargarResumen();
+        jTable1.setCellSelectionEnabled(false);
+        jTable1.setRowSelectionAllowed(true);
+        jTable1.setColumnSelectionAllowed(false);
         cargarPedidos();
     }
-    private void botonActivo(JButton boton) {
-    boton.setBackground(new Color(36, 107, 255));
-    boton.setForeground(Color.WHITE);
-    boton.setOpaque(true);
-    boton.setBorderPainted(false);
-}
 
-private void botonInactivo(JButton boton) {
-    boton.setBackground(new Color(204, 204, 204));
-    boton.setForeground(Color.BLACK);
-    boton.setOpaque(true);
-    boton.setBorderPainted(false);
-}
-
-private void marcarBotonActual() {
-    botonInactivo(btnRegistroProductos);
-    botonActivo(btnHistorialVentas);
-}
-private void cargarResumen() {
-
-    try {
-        String sqlVentas =
-                "SELECT IFNULL(SUM(Total), 0) AS total_ventas " +
-                "FROM ventas";
-
-        ps = cn.prepareStatement(sqlVentas);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            lblTotalVentas.setText("$" + String.format("%.2f", rs.getDouble("total_ventas")));
-        }
-
-        String sqlProductos =
-                "SELECT COUNT(*) AS productos_vendidos " +
-                "FROM detalle_ventas";
-
-        ps = cn.prepareStatement(sqlProductos);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            lblProductosVendidos.setText(String.valueOf(rs.getInt("productos_vendidos")));
-        }
-
-        String sqlTransacciones =
-                "SELECT COUNT(*) AS transacciones " +
-                "FROM ventas";
-
-        ps = cn.prepareStatement(sqlTransacciones);
-        rs = ps.executeQuery();
-
-        if (rs.next()) {
-            lblTransacciones.setText(String.valueOf(rs.getInt("transacciones")));
-        }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar resumen: " + e.getMessage()
-        );
-    }
-}
-private void cargarPedidos() {
-
-    pnlPedidos.removeAll();
-
-    try {
-        String sql =
-                "SELECT " +
-                "p.Id_Pedido, " +
-                "p.Estado, " +
-                "p.Hora_inicio, " +
-                "p.Hora_entrega, " +
-                "v.Fecha, " +
-                "v.Total, " +
-                "u.Nombre, " +
-                "u.Apellido, " +
-                "u.Usuario " +
-                "FROM pedidos p " +
-                "INNER JOIN ventas v ON p.Id_Venta = v.Id_Venta " +
-                "INNER JOIN usuarios u ON v.Id_Usuario = u.Id_Usuario " +
-                "ORDER BY p.Id_Pedido DESC";
-
-        ps = cn.prepareStatement(sql);
-        rs = ps.executeQuery();
-
-        boolean hayPedidos = false;
-
-        while (rs.next()) {
-            hayPedidos = true;
-
-            int idPedido = rs.getInt("Id_Pedido");
-            String fecha = rs.getString("Fecha");
-            String estado = rs.getString("Estado");
-            double total = rs.getDouble("Total");
-
-            String cliente =
-                    rs.getString("Nombre") + " " +
-                    rs.getString("Apellido");
-
-            JPanel tarjeta = crearTarjetaPedido(
-                    idPedido,
-                    fecha,
-                    cliente,
-                    estado,
-                    total
-            );
-
-            pnlPedidos.add(tarjeta);
-            pnlPedidos.add(Box.createVerticalStrut(15));
-        }
-
-        if (!hayPedidos) {
-            javax.swing.JLabel lblVacio =
-                    new javax.swing.JLabel("No hay pedidos registrados.");
-
-            lblVacio.setFont(
-                    new Font("Times New Roman", Font.BOLD, 18)
-            );
-
-            pnlPedidos.add(lblVacio);
-        }
-
-        pnlPedidos.revalidate();
-        pnlPedidos.repaint();
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar pedidos: " + e.getMessage()
-        );
-    }
-}
-private JPanel crearTarjetaPedido(
-        int idPedido,
-        String fecha,
-        String cliente,
-        String estado,
-        double total) {
-
-    JPanel tarjeta = new JPanel();
-    tarjeta.setBackground(new Color(217, 217, 217));
-    tarjeta.setPreferredSize(new Dimension(540, 120));
-    tarjeta.setMaximumSize(new Dimension(540, 120));
-    tarjeta.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
-    tarjeta.setBorder(
-            BorderFactory.createLineBorder(
-                    new Color(180, 180, 180)
-            )
-    );
-
-    javax.swing.JLabel lblPedido =
-            new javax.swing.JLabel("Pedido #" + String.format("%03d", idPedido));
-
-    lblPedido.setFont(new Font("Times New Roman", Font.BOLD, 20));
-
-    tarjeta.add(
-            lblPedido,
-            new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 15, 200, 30)
-    );
-
-    javax.swing.JLabel lblFecha =
-            new javax.swing.JLabel(fecha);
-
-    lblFecha.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-
-    tarjeta.add(
-            lblFecha,
-            new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 50, 220, 25)
-    );
-
-    javax.swing.JLabel lblCliente =
-            new javax.swing.JLabel("Cliente: " + cliente);
-
-    lblCliente.setFont(new Font("Times New Roman", Font.PLAIN, 15));
-
-    tarjeta.add(
-            lblCliente,
-            new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 300, 25)
-    );
-
-    javax.swing.JLabel lblEstado =
-            new javax.swing.JLabel(estado);
-
-    lblEstado.setFont(new Font("Times New Roman", Font.BOLD, 15));
-
-    if (estado.equalsIgnoreCase("PENDIENTE")) {
-        lblEstado.setForeground(new Color(120, 100, 0));
-    } else if (estado.equalsIgnoreCase("ACEPTADO")
-            || estado.equalsIgnoreCase("En Camino")) {
-        lblEstado.setForeground(new Color(0, 120, 0));
-    } else if (estado.equalsIgnoreCase("RECHAZADO")) {
-        lblEstado.setForeground(Color.RED);
-    } else {
-        lblEstado.setForeground(Color.DARK_GRAY);
-    }
-
-    tarjeta.add(
-            lblEstado,
-            new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 20, 130, 25)
-    );
-
-    javax.swing.JLabel lblTotal =
-            new javax.swing.JLabel("$" + String.format("%.2f", total));
-
-    lblTotal.setFont(new Font("Times New Roman", Font.BOLD, 18));
-
-    tarjeta.add(
-            lblTotal,
-            new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 75, 120, 25)
-    );
-
-    tarjeta.addMouseListener(new java.awt.event.MouseAdapter() {
+    public void cargarPedidos() {
+        String[] columnas = {"ID_Pedido", "Comprador", "Productos", "Total", "Estado"};
+        DefaultTableModel modelo = new DefaultTableModel(columnas, 0) {
         @Override
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
+        public boolean isCellEditable(int row, int col) { return false; }
+        };
+        jTable1.setModel(modelo);
 
-            idPedidoSeleccionado = idPedido;
+        ConexionMySQL mysql = new ConexionMySQL();
+        cn = mysql.Conectar();
 
-            tarjeta.setBackground(new Color(190, 210, 255));
-
-            JOptionPane.showMessageDialog(VentanaHistorialVentasB.this,
-                    "Pedido seleccionado: #" + idPedido
-            );
+        if (cn == null) return;
+        String sql = "SELECT p.Id_Pedido, u.Usuario AS Comprador, "
+                   + "GROUP_CONCAT(CONCAT(dp.Cantidad, 'x ', dp.Producto) SEPARATOR ', ') AS ListaProductos, "
+                   + "p.Total, p.Estado "
+                   + "FROM pedidos p "
+                   + "INNER JOIN usuarios u ON p.Id_Usuario = u.Id_Usuario "
+                   + "INNER JOIN detalle_pedidos dp ON p.Id_Pedido = dp.Id_Pedido "
+                   + "INNER JOIN productos pr ON dp.Producto = pr.Nombre "
+                   + "WHERE pr.Id_Usuario = ? " // <--- Solo ve sus propias ventas
+                   + "GROUP BY p.Id_Pedido "
+                   + "ORDER BY p.Id_Pedido DESC";
+        try {
+            ps = cn.prepareStatement(sql);
+            ps.setInt(1, this.idUsuarioActual); 
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                Object[] fila = {
+                    rs.getInt("Id_Pedido"),
+                    rs.getString("Comprador"),
+                    rs.getString("ListaProductos"), 
+                    "$" + String.format("%.2f", rs.getDouble("Total")),
+                    rs.getString("Estado")
+                };
+                modelo.addRow(fila);
+            }
+            cn.close();
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar pedidos: " + e.getMessage());
         }
-    });
-
-    return tarjeta;
-}
-
+        actualizarEstadisticas(); 
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -320,9 +96,10 @@ private JPanel crearTarjetaPedido(
         btnAceptarPedido = new javax.swing.JButton();
         btnRechazarPedido = new javax.swing.JButton();
         scrollPedidos = new javax.swing.JScrollPane();
-        pnlPedidos = new javax.swing.JPanel();
+        jTable1 = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblTitulo.setFont(new java.awt.Font("Times New Roman", 1, 18)); // NOI18N
         lblTitulo.setText("Historial de Ventas");
@@ -426,14 +203,46 @@ private JPanel crearTarjetaPedido(
         btnHistorialVentas.setText("Historial de ventas");
         btnHistorialVentas.addActionListener(this::btnHistorialVentasActionPerformed);
 
+        btnAceptarPedido.setBackground(new java.awt.Color(51, 204, 0));
+        btnAceptarPedido.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        btnAceptarPedido.setForeground(new java.awt.Color(255, 255, 255));
         btnAceptarPedido.setText("Aceptar pedido");
         btnAceptarPedido.addActionListener(this::btnAceptarPedidoActionPerformed);
 
+        btnRechazarPedido.setBackground(new java.awt.Color(255, 0, 0));
+        btnRechazarPedido.setFont(new java.awt.Font("Times New Roman", 1, 12)); // NOI18N
+        btnRechazarPedido.setForeground(new java.awt.Color(255, 255, 255));
         btnRechazarPedido.setText("Rechazar pedido");
         btnRechazarPedido.addActionListener(this::btnRechazarPedidoActionPerformed);
 
-        pnlPedidos.setLayout(new javax.swing.BoxLayout(pnlPedidos, javax.swing.BoxLayout.LINE_AXIS));
-        scrollPedidos.setViewportView(pnlPedidos);
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
+            },
+            new String [] {
+                "ID_Pedido", "Comprador", "Productos", "Total", "Estado"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Float.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, true, false, false, true
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jTable1.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        scrollPedidos.setViewportView(jTable1);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -455,7 +264,7 @@ private JPanel crearTarjetaPedido(
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(btnRegistroProductos)
-                                .addGap(90, 90, 90)
+                                .addGap(120, 120, 120)
                                 .addComponent(btnHistorialVentas))
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(pnlVentasTotales, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -480,147 +289,96 @@ private JPanel crearTarjetaPedido(
                     .addComponent(pnlProductosVendidos, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(btnHistorialVentas)
-                    .addComponent(btnRegistroProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 29, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+                    .addComponent(btnRegistroProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(btnHistorialVentas, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(2, 2, 2)))
                 .addComponent(scrollPedidos, javax.swing.GroupLayout.PREFERRED_SIZE, 263, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(30, 30, 30)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAceptarPedido)
                     .addComponent(btnRechazarPedido))
-                .addContainerGap(9, Short.MAX_VALUE))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-        );
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(6, 6, -1, -1));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAceptarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarPedidoActionPerformed
-if (idPedidoSeleccionado == -1) {
-        JOptionPane.showMessageDialog(this, "Selecciona primero un pedido.");
-        return;
-    }
+    int fila = jTable1.getSelectedRow();
+        if (fila == -1) { JOptionPane.showMessageDialog(this, "Selecciona un pedido de la tabla."); return; }
 
-    try {
-        String sql =
-                "UPDATE pedidos " +
-                "SET Estado = 'ACEPTADO' " +
-                "WHERE Id_Pedido = ?";
+        int idPedido = Integer.parseInt(jTable1.getValueAt(fila, 0).toString());
 
-        ps = cn.prepareStatement(sql);
-        ps.setInt(1, idPedidoSeleccionado);
-
-        int filas = ps.executeUpdate();
-
-        if (filas > 0) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Pedido aceptado correctamente."
-            );
-
-            idPedidoSeleccionado = -1;
-            cargarResumen();
+        try {
+            ConexionMySQL mysql = new ConexionMySQL();
+            cn = mysql.Conectar();
+            cn.setAutoCommit(false); 
+            String sqlStock = "UPDATE productos p JOIN detalle_pedidos dp ON p.Nombre = dp.Producto "
+                            + "SET p.Cantidad = p.Cantidad - dp.Cantidad WHERE dp.Id_Pedido = ?";
+            ps = cn.prepareStatement(sqlStock);
+            ps.setInt(1, idPedido);
+            ps.executeUpdate();
+            String sqlEstado = "UPDATE pedidos SET Estado = 'ACEPTADO' WHERE Id_Pedido = ?";
+            ps = cn.prepareStatement(sqlEstado);
+            ps.setInt(1, idPedido);
+            ps.executeUpdate();
+            cn.commit();
+            cn.close();
+            JOptionPane.showMessageDialog(this, "¡Pedido aceptado e inventario descontado!");
             cargarPedidos();
+        } catch (Exception e) {
+            try { cn.rollback(); } catch (Exception ex) {}
+            JOptionPane.showMessageDialog(this, "Error al procesar: " + e.getMessage());
         }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al aceptar pedido: " + e.getMessage()
-        );
-    }
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnAceptarPedidoActionPerformed
 
     private void btnRechazarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRechazarPedidoActionPerformed
- if (idPedidoSeleccionado == -1) {
-        JOptionPane.showMessageDialog(this, "Selecciona primero un pedido.");
-        return;
-    }
+    int fila = jTable1.getSelectedRow();
+        if (fila == -1) { JOptionPane.showMessageDialog(this, "Selecciona un pedido."); return; }
 
-    int opcion = JOptionPane.showConfirmDialog(
-            this,
-            "¿Seguro que deseas rechazar este pedido?",
-            "Confirmar rechazo",
-            JOptionPane.YES_NO_OPTION
-    );
-
-    if (opcion != JOptionPane.YES_OPTION) {
-        return;
-    }
-
-    try {
-        String sql =
-                "UPDATE pedidos " +
-                "SET Estado = 'RECHAZADO' " +
-                "WHERE Id_Pedido = ?";
-
-        ps = cn.prepareStatement(sql);
-        ps.setInt(1, idPedidoSeleccionado);
-
-        int filas = ps.executeUpdate();
-
-        if (filas > 0) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Pedido rechazado correctamente."
-            );
-
-            idPedidoSeleccionado = -1;
-            cargarResumen();
+        int idPedido = Integer.parseInt(jTable1.getValueAt(fila, 0).toString());
+        
+        try {
+            ConexionMySQL mysql = new ConexionMySQL();
+            cn = mysql.Conectar();
+            String sql = "UPDATE pedidos SET Estado = 'RECHAZADO' WHERE Id_Pedido = ?";
+            ps = cn.prepareStatement(sql);
+            ps.setInt(1, idPedido);
+            ps.executeUpdate();
+            cn.close();
+            
             cargarPedidos();
+            JOptionPane.showMessageDialog(this, "Pedido rechazado.");
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: " + e.getMessage());
         }
-
-    } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al rechazar pedido: " + e.getMessage()
-        );
-    }
-        // TODO add your handling code here:
     }//GEN-LAST:event_btnRechazarPedidoActionPerformed
 
     private void btnRegistroProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegistroProductosActionPerformed
+
     javax.swing.JDesktopPane desktop = this.getDesktopPane();
     if (desktop != null) {
-        versionbeta.VentanaVentasB ventas = new versionbeta.VentanaVentasB(this.idUsuarioActual);
-        desktop.add(ventas);
-        ventas.setVisible(true);
-        int x = (desktop.getWidth() - ventas.getWidth()) / 2;
-        int y = (desktop.getHeight() - ventas.getHeight()) / 2;
-        ventas.setLocation(x, y);
+        versionbeta.VentanaVentasB productos = new versionbeta.VentanaVentasB(this.idUsuarioActual);
+        desktop.add(productos);
+        productos.setVisible(true);
+        int x = (desktop.getWidth() - productos.getWidth()) / 2;
+        int y = (desktop.getHeight() - productos.getHeight()) / 2;
+        productos.setLocation(x, y);
+        this.dispose();
     }
-    this.dispose();
     }//GEN-LAST:event_btnRegistroProductosActionPerformed
 
     private void btnHistorialVentasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnHistorialVentasActionPerformed
-    marcarBotonActual();
-    cargarResumen();
-    cargarPedidos();
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_btnHistorialVentasActionPerformed
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
@@ -636,17 +394,47 @@ if (idPedidoSeleccionado == -1) {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new VentanaHistorialVentasB().setVisible(true));
+        java.awt.EventQueue.invokeLater(() -> new VentanaHistorialVentasB(0).setVisible(true));
     }
+    public void actualizarEstadisticas() {
+    ConexionMySQL mysql = new ConexionMySQL();
+    java.sql.Connection con = mysql.Conectar();
+    if (con == null) return;
+    String sqlVentas = "SELECT IFNULL(SUM(sub.Total), 0) AS total_dinero FROM (SELECT DISTINCT p.Id_Pedido, p.Total FROM pedidos p INNER JOIN detalle_pedidos dp ON p.Id_Pedido = dp.Id_Pedido INNER JOIN productos pr ON dp.Producto = pr.Nombre WHERE pr.Id_Usuario = ? AND p.Estado = 'ACEPTADO') AS sub";
+    String sqlProds = "SELECT IFNULL(SUM(dp.Cantidad), 0) AS total_articulos FROM detalle_pedidos dp INNER JOIN pedidos p ON dp.Id_Pedido = p.Id_Pedido INNER JOIN productos pr ON dp.Producto = pr.Nombre WHERE pr.Id_Usuario = ? AND p.Estado = 'ACEPTADO'";
+    String sqlTrans = "SELECT COUNT(DISTINCT p.Id_Usuario) AS total_clientes FROM pedidos p INNER JOIN detalle_pedidos dp ON p.Id_Pedido = dp.Id_Pedido INNER JOIN productos pr ON dp.Producto = pr.Nombre WHERE pr.Id_Usuario = ? AND p.Estado = 'ACEPTADO'";
 
+    try {
+        java.sql.PreparedStatement ps1 = con.prepareStatement(sqlVentas);
+        ps1.setInt(1, this.idUsuarioActual);
+        java.sql.ResultSet rs1 = ps1.executeQuery();
+        if (rs1.next()) {
+            lblTotalVentas.setText(String.format("$ %.2f", rs1.getDouble("total_dinero")));
+        }
+        java.sql.PreparedStatement ps2 = con.prepareStatement(sqlProds);
+        ps2.setInt(1, this.idUsuarioActual);
+        java.sql.ResultSet rs2 = ps2.executeQuery();
+        if (rs2.next()) {
+            lblProductosVendidos.setText(rs2.getInt("total_articulos")+" arts.");
+        }
+        java.sql.PreparedStatement ps3 = con.prepareStatement(sqlTrans);
+        ps3.setInt(1, this.idUsuarioActual);
+        java.sql.ResultSet rs3 = ps3.executeQuery();
+        if (rs3.next()) {
+            lblTransacciones.setText(String.valueOf(rs3.getInt("total_clientes")));
+        }
+        con.close();
+    } catch (Exception e) {
+        System.out.println("Error al actualizar estadísticas de historial: " + e.getMessage());
+    }
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAceptarPedido;
     private javax.swing.JButton btnHistorialVentas;
     private javax.swing.JButton btnRechazarPedido;
     private javax.swing.JButton btnRegistroProductos;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblIconoProductos;
     private javax.swing.JLabel lblIconoTransacciones;
     private javax.swing.JLabel lblProductosTitulo;
@@ -656,10 +444,11 @@ if (idPedidoSeleccionado == -1) {
     private javax.swing.JLabel lblTransacciones;
     private javax.swing.JLabel lblTransaccionesTitulo;
     private javax.swing.JLabel lblVentasTitulo;
-    private javax.swing.JPanel pnlPedidos;
     private javax.swing.JPanel pnlProductosVendidos;
     private javax.swing.JPanel pnlTransacciones;
     private javax.swing.JPanel pnlVentasTotales;
     private javax.swing.JScrollPane scrollPedidos;
     // End of variables declaration//GEN-END:variables
 }
+
+

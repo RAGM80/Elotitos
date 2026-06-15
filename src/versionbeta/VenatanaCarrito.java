@@ -13,20 +13,12 @@ import intento.*;
 public class VenatanaCarrito extends javax.swing.JInternalFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VenatanaCarrito.class.getName());
     private int idUsuarioActual;
-
-    /**
-     * Creates new form carrito
-     */
     public VenatanaCarrito() {
         initComponents();
-        btnProductos.addActionListener(this::btnProductosActionPerformed);
-        cargarProductosAlCarrito();
     }
-    public VenatanaCarrito(int idUsuarioActual) {
-        this.idUsuarioActual = idUsuarioActual;
+    public VenatanaCarrito(int idUsuario) {
+        this.idUsuarioActual = idUsuario;
         initComponents();
-        // 🌟 Amarramos el botón en el constructor con sesión
-        btnProductos.addActionListener(this::btnProductosActionPerformed);
         cargarProductosAlCarrito();
     }
 public void cargarProductosAlCarrito() {
@@ -59,7 +51,6 @@ public void cargarProductosAlCarrito() {
                 Object[] fila = new Object[5];
                 fila[0] = rs.getString("producto");
                 fila[1] = rs.getString("vendedor");
-                // 💵 Ahora sí podemos mandarlo como String con "$" de forma segura
                 fila[2] = "$" + String.format("%.2f", rs.getDouble("precio")); 
                 fila[3] = rs.getInt("cantidad");
                 fila[4] = rs.getString("fecha"); 
@@ -104,8 +95,8 @@ public void actualizarTotalResumen() {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         btnProductos = new javax.swing.JButton();
-        btnProductos1 = new javax.swing.JButton();
-        btnProductos2 = new javax.swing.JButton();
+        btnCarrito = new javax.swing.JButton();
+        btnMisPedidos = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
@@ -114,11 +105,11 @@ public void actualizarTotalResumen() {
         jLabel7 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
+        btnRealizarPedido = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -137,16 +128,17 @@ public void actualizarTotalResumen() {
         btnProductos.addActionListener(this::btnProductosActionPerformed);
         jPanel1.add(btnProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(37, 59, 148, 32));
 
-        btnProductos1.setBackground(new java.awt.Color(204, 204, 204));
-        btnProductos1.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnProductos1.setText("Carrito");
-        jPanel1.add(btnProductos1, new org.netbeans.lib.awtextra.AbsoluteConstraints(274, 59, 148, 32));
+        btnCarrito.setBackground(new java.awt.Color(204, 204, 204));
+        btnCarrito.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnCarrito.setText("Carrito");
+        btnCarrito.addActionListener(this::btnCarritoActionPerformed);
+        jPanel1.add(btnCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(274, 59, 148, 32));
 
-        btnProductos2.setBackground(new java.awt.Color(204, 204, 204));
-        btnProductos2.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
-        btnProductos2.setText("Mis Pedidos");
-        btnProductos2.addActionListener(this::btnProductos2ActionPerformed);
-        jPanel1.add(btnProductos2, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 59, 148, 32));
+        btnMisPedidos.setBackground(new java.awt.Color(204, 204, 204));
+        btnMisPedidos.setFont(new java.awt.Font("Times New Roman", 1, 14)); // NOI18N
+        btnMisPedidos.setText("Mis Pedidos");
+        btnMisPedidos.addActionListener(this::btnMisPedidosActionPerformed);
+        jPanel1.add(btnMisPedidos, new org.netbeans.lib.awtextra.AbsoluteConstraints(553, 59, 148, 32));
 
         jPanel2.setBackground(new java.awt.Color(204, 204, 204));
         jPanel2.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -174,10 +166,11 @@ public void actualizarTotalResumen() {
         jLabel9.setText("$ 00.00");
         jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(120, 190, -1, -1));
 
-        jButton1.setBackground(new java.awt.Color(51, 51, 255));
-        jButton1.setForeground(new java.awt.Color(255, 255, 255));
-        jButton1.setText("Realizar Pedido");
-        jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, -1, -1));
+        btnRealizarPedido.setBackground(new java.awt.Color(51, 51, 255));
+        btnRealizarPedido.setForeground(new java.awt.Color(255, 255, 255));
+        btnRealizarPedido.setText("Realizar Pedido");
+        btnRealizarPedido.addActionListener(this::btnRealizarPedidoActionPerformed);
+        jPanel2.add(btnRealizarPedido, new org.netbeans.lib.awtextra.AbsoluteConstraints(40, 230, -1, -1));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 140, 190, 280));
 
@@ -226,15 +219,25 @@ public void actualizarTotalResumen() {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnProductos2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductos2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnProductos2ActionPerformed
+    private void btnMisPedidosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnMisPedidosActionPerformed
+    javax.swing.JDesktopPane desktop = this.getDesktopPane();
+        if (desktop != null) {
+            VentanaMisPedidosB misPedidos = new VentanaMisPedidosB(idUsuarioActual);
+            desktop.add(misPedidos);
+            misPedidos.setSize(this.getSize());
+            misPedidos.setLocation(this.getLocation());
+            misPedidos.setVisible(true);
+            try {
+                misPedidos.setSelected(true);
+            } catch (Exception e) {}
+            this.dispose(); 
+        }
+    }//GEN-LAST:event_btnMisPedidosActionPerformed
 
     private void btnProductosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProductosActionPerformed
 
         javax.swing.JDesktopPane desktop = this.getDesktopPane();
         if (desktop != null) {
-            // Instanciamos la tienda pasándole el ID de usuario actual
             VentanaProductosB tienda = new VentanaProductosB(idUsuarioActual);
             desktop.add(tienda);
             tienda.setSize(this.getSize());
@@ -246,6 +249,105 @@ public void actualizarTotalResumen() {
             this.dispose(); 
         }
     }//GEN-LAST:event_btnProductosActionPerformed
+
+    private void btnRealizarPedidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRealizarPedidoActionPerformed
+int filasCarrito = jTable1.getRowCount();
+    if (filasCarrito == 0) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Tu carrito está vacío.");
+        return;
+    }
+    ConexionMySQL mysql = new ConexionMySQL();
+    java.sql.Connection con = mysql.Conectar();
+    if (con != null) {
+        try {
+            con.setAutoCommit(false);
+            String sqlVendedores = "SELECT DISTINCT p.Id_Usuario AS id_vendedor "
+                                 + "FROM carrito c "
+                                 + "INNER JOIN productos p ON c.Id_Producto = p.Id_Productos "
+                                 + "WHERE c.Id_Usuario = ?";
+            
+            java.sql.PreparedStatement pstVend = con.prepareStatement(sqlVendedores);
+            pstVend.setInt(1, this.idUsuarioActual);
+            java.sql.ResultSet rsVend = pstVend.executeQuery();
+            while (rsVend.next()) {
+                int idVendedor = rsVend.getInt("id_vendedor");
+                double totalVendedor = 0;
+                int cantidadVendedor = 0;
+                String sqlItems = "SELECT c.Id_Producto, p.Nombre, c.Cantidad, p.Precio, p.Cantidad AS stock_disponible "
+                                + "FROM carrito c "
+                                + "INNER JOIN productos p ON c.Id_Producto = p.Id_Productos "
+                                + "WHERE c.Id_Usuario = ? AND p.Id_Usuario = ?";
+                java.sql.PreparedStatement pstItems = con.prepareStatement(sqlItems);
+                pstItems.setInt(1, this.idUsuarioActual);
+                pstItems.setInt(2, idVendedor);
+                java.sql.ResultSet rsItems = pstItems.executeQuery();
+                java.util.List<Object[]> itemsPedido = new java.util.ArrayList<>();
+                while (rsItems.next()) {
+                int idProd = rsItems.getInt("Id_Producto");
+                String nomProd = rsItems.getString("Nombre");
+                int cant = rsItems.getInt("Cantidad");
+                double prec = rsItems.getDouble("Precio");
+                int stock = rsItems.next() ? rsItems.getInt("stock_disponible") : 0; 
+                if (cant > stock) {
+                    javax.swing.JOptionPane.showMessageDialog(this, 
+                        "¡No se puede realizar el pedido!\n\n" +
+                        "El producto '" + nomProd + "' no tiene suficiente stock.\n" +
+                        "Disponibles en tienda: " + stock + " arts.\n" +
+                        "En tu carrito llevas: " + cant + " arts.\n\n" +
+                        "Por favor, reduce la cantidad antes de comprar.", 
+                        "Stock Insuficiente", javax.swing.JOptionPane.WARNING_MESSAGE);
+                    con.rollback(); 
+                    con.close();
+                    return; 
+                }
+    
+                totalVendedor += (prec * cant);
+                cantidadVendedor += cant;
+                itemsPedido.add(new Object[]{idProd, nomProd, cant, prec});
+                }
+                String sqlPedido = "INSERT INTO pedidos (Id_Usuario, Id_Venta, Estado, Total, Cantidad_Productos, Hora_inicio) VALUES (?, 1, 'En Proceso', ?, ?, NOW())";
+                java.sql.PreparedStatement pstPadre = con.prepareStatement(sqlPedido, java.sql.Statement.RETURN_GENERATED_KEYS);
+                pstPadre.setInt(1, this.idUsuarioActual); 
+                pstPadre.setDouble(2, totalVendedor);
+                pstPadre.setInt(3, cantidadVendedor);
+                pstPadre.executeUpdate();
+                java.sql.ResultSet rsKeys = pstPadre.getGeneratedKeys();
+                int idPedidoNuevo = 0;
+                if (rsKeys.next()) {
+                    idPedidoNuevo = rsKeys.getInt(1);
+                }
+                String sqlDetalle = "INSERT INTO detalle_pedidos (Id_Pedido, Producto, Cantidad, Precio) VALUES (?, ?, ?, ?)";
+                java.sql.PreparedStatement pstHijo = con.prepareStatement(sqlDetalle);
+                
+                for (Object[] item : itemsPedido) {
+                    pstHijo.setInt(1, idPedidoNuevo);
+                    pstHijo.setString(2, item[1].toString()); 
+                    pstHijo.setInt(3, Integer.parseInt(item[2].toString())); 
+                    pstHijo.setDouble(4, Double.parseDouble(item[3].toString())); 
+                    pstHijo.executeUpdate();
+                }
+            }
+            String sqlVaciar = "DELETE FROM carrito WHERE Id_Usuario = ?";
+            java.sql.PreparedStatement pstBorrar = con.prepareStatement(sqlVaciar);
+            pstBorrar.setInt(1, this.idUsuarioActual);
+            pstBorrar.executeUpdate();
+
+            con.commit();
+            con.close();
+            
+            javax.swing.JOptionPane.showMessageDialog(this, "¡Tus pedidos se han enviado a los respectivos vendedores con éxito!");
+            cargarProductosAlCarrito();
+
+        } catch (Exception e) {
+            System.out.println("Error al procesar la compra dividida: " + e.getMessage());
+            try { con.rollback(); } catch (Exception ex) {}
+        }
+      }
+    }//GEN-LAST:event_btnRealizarPedidoActionPerformed
+
+    private void btnCarritoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarritoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnCarritoActionPerformed
   public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -269,10 +371,10 @@ try {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCarrito;
+    private javax.swing.JButton btnMisPedidos;
     private javax.swing.JButton btnProductos;
-    private javax.swing.JButton btnProductos1;
-    private javax.swing.JButton btnProductos2;
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnRealizarPedido;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

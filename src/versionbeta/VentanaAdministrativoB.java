@@ -37,209 +37,146 @@ private ResultSet rs;
         cargarProductoMasVendido();
     }
 private void cargarResumenAdministrativo() {
-
+if (cn == null) return;
     try {
-        String sqlIngresos =
-                "SELECT IFNULL(SUM(Total), 0) AS ingresos " +
-                "FROM ventas";
-
+        String sqlIngresos = "SELECT IFNULL(SUM(Total), 0) AS ingresos FROM pedidos WHERE Estado = 'ACEPTADO'";
         ps = cn.prepareStatement(sqlIngresos);
         rs = ps.executeQuery();
-
         if (rs.next()) {
-            lblIngresosTotales.setText(
-                    "$" + String.format("%.2f", rs.getDouble("ingresos"))
-            );
+            lblIngresosTotales.setText("$" + String.format("%.2f", rs.getDouble("ingresos")));
         }
-
-        String sqlVentas =
-                "SELECT COUNT(*) AS total_ventas " +
-                "FROM ventas";
-
+        String sqlVentas = "SELECT COUNT(*) AS total_ventas FROM pedidos WHERE Estado = 'ACEPTADO'";
         ps = cn.prepareStatement(sqlVentas);
         rs = ps.executeQuery();
-
         if (rs.next()) {
-            lblTotalVentas.setText(
-                    String.valueOf(rs.getInt("total_ventas"))
-            );
+            lblTotalVentas.setText(String.valueOf(rs.getInt("total_ventas")));
         }
-
-        String sqlVendedores =
-                "SELECT COUNT(*) AS vendedores_activos " +
-                "FROM usuarios " +
-                "WHERE Rol = 'Vendedor' AND Estado = 'Activo'";
-
+        String sqlVendedores = "SELECT COUNT(*) AS vendedores_activos FROM usuarios WHERE Rol = 'Vendedor' AND Estado = 'Activo'";
         ps = cn.prepareStatement(sqlVendedores);
         rs = ps.executeQuery();
-
         if (rs.next()) {
-            lblVendedoresActivos.setText(
-                    String.valueOf(rs.getInt("vendedores_activos"))
-            );
+            lblVendedoresActivos.setText(String.valueOf(rs.getInt("vendedores_activos")));
         }
-
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar resumen: " + e.getMessage()
-        );
+        JOptionPane.showMessageDialog(this, "Error al cargar resumen administrativo: " + e.getMessage());
     }
 }
 private void cargarRendimientoVendedores() {
-
-    DefaultTableModel modelo = new DefaultTableModel();
-
+DefaultTableModel modelo = new DefaultTableModel();
     modelo.addColumn("Vendedor");
     modelo.addColumn("Estado");
     modelo.addColumn("Ventas");
     modelo.addColumn("Productos");
     modelo.addColumn("Ingresos");
-
     tblRendimientoVendedores.setModel(modelo);
-
+    if (cn == null) return;
+    String sql = "SELECT u.Usuario AS vendedor, u.Estado AS estado, "
+               + "COUNT(DISTINCT p.Id_Pedido) AS ventas, "
+               + "IFNULL(SUM(dp.Cantidad), 0) AS productos, "
+               + "IFNULL(SUM(dp.Cantidad * dp.Precio), 0) AS ingresos "
+               + "FROM usuarios u "
+               + "LEFT JOIN productos pr ON u.Id_Usuario = pr.Id_Usuario "
+               + "LEFT JOIN detalle_pedidos dp ON pr.Nombre = dp.Producto "
+               + "LEFT JOIN pedidos p ON dp.Id_Pedido = p.Id_Pedido AND p.Estado = 'ACEPTADO' "
+               + "WHERE u.Rol = 'Vendedor' "
+               + "GROUP BY u.Id_Usuario, u.Usuario, u.Estado "
+               + "ORDER BY ingresos DESC";
     try {
-        String sql =
-                "SELECT " +
-                "u.Usuario AS vendedor, " +
-                "u.Estado AS estado, " +
-                "COUNT(v.Id_Venta) AS ventas, " +
-                "IFNULL(SUM(dv.Cantidad), 0) AS productos, " +
-                "IFNULL(SUM(v.Total), 0) AS ingresos " +
-                "FROM usuarios u " +
-                "LEFT JOIN ventas v ON u.Id_Usuario = v.Id_Usuario " +
-                "LEFT JOIN detalle_ventas dv ON v.Id_Venta = dv.Id_Venta " +
-                "WHERE u.Rol = 'Vendedor' " +
-                "GROUP BY u.Id_Usuario, u.Usuario, u.Estado " +
-                "ORDER BY ingresos DESC";
-
         ps = cn.prepareStatement(sql);
         rs = ps.executeQuery();
-
         while (rs.next()) {
-
             Object[] fila = new Object[5];
-
             fila[0] = rs.getString("vendedor");
             fila[1] = rs.getString("estado");
             fila[2] = rs.getInt("ventas");
             fila[3] = rs.getInt("productos");
             fila[4] = "$" + String.format("%.2f", rs.getDouble("ingresos"));
-
             modelo.addRow(fila);
         }
-
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar rendimiento de vendedores: " + e.getMessage()
-        );
+        JOptionPane.showMessageDialog(this, "Error al cargar rendimiento de vendedores: " + e.getMessage());
     }
 }
 private void cargarVendedoresMes() {
-
     DefaultTableModel modelo = new DefaultTableModel();
-
     modelo.addColumn("Vendedor");
     modelo.addColumn("Ingresos");
-
     tblVendedoresMes.setModel(modelo);
 
+    if (cn == null) return;
+    
+    // TOP 3 de vendedores con mejores ingresos reales
+    String sql = "SELECT u.Usuario AS vendedor, "
+               + "IFNULL(SUM(dp.Cantidad * dp.Precio), 0) AS ingresos "
+               + "FROM usuarios u "
+               + "INNER JOIN productos pr ON u.Id_Usuario = pr.Id_Usuario "
+               + "INNER JOIN detalle_pedidos dp ON pr.Nombre = dp.Producto "
+               + "INNER JOIN pedidos p ON dp.Id_Pedido = p.Id_Pedido "
+               + "WHERE u.Rol = 'Vendedor' AND p.Estado = 'ACEPTADO' "
+               + "GROUP BY u.Id_Usuario, u.Usuario "
+               + "ORDER BY ingresos DESC "
+               + "LIMIT 3";
     try {
-        String sql =
-                "SELECT " +
-                "u.Usuario AS vendedor, " +
-                "IFNULL(SUM(v.Total), 0) AS ingresos " +
-                "FROM usuarios u " +
-                "INNER JOIN ventas v ON u.Id_Usuario = v.Id_Usuario " +
-                "WHERE u.Rol = 'Vendedor' " +
-                "GROUP BY u.Id_Usuario, u.Usuario " +
-                "ORDER BY ingresos DESC " +
-                "LIMIT 3";
-
         ps = cn.prepareStatement(sql);
         rs = ps.executeQuery();
-
         while (rs.next()) {
-
             Object[] fila = new Object[2];
-
             fila[0] = rs.getString("vendedor");
             fila[1] = "$" + String.format("%.2f", rs.getDouble("ingresos"));
-
             modelo.addRow(fila);
         }
-
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar vendedores del mes: " + e.getMessage()
-        );
+        JOptionPane.showMessageDialog(this, "Error al cargar vendedores del mes: " + e.getMessage());
     }
 }
+
 private void cargarMejorDiaVentas() {
-
+    if (cn == null) return;
+    String sql = "SELECT CASE DAYOFWEEK(Hora_inicio) "
+               + "WHEN 1 THEN 'Domingo' "
+               + "WHEN 2 THEN 'Lunes' "
+               + "WHEN 3 THEN 'Martes' "
+               + "WHEN 4 THEN 'Miércoles' "
+               + "WHEN 5 THEN 'Jueves' "
+               + "WHEN 6 THEN 'Viernes' "
+               + "WHEN 7 THEN 'Sábado' "
+               + "END AS dia, COUNT(*) AS total "
+               + "FROM pedidos "
+               + "WHERE Estado = 'ACEPTADO' "
+               + "GROUP BY dia "
+               + "ORDER BY total DESC LIMIT 1";
     try {
-        String sql =
-                "SELECT " +
-                "CASE DAYOFWEEK(Fecha) " +
-                "WHEN 1 THEN 'Domingo' " +
-                "WHEN 2 THEN 'Lunes' " +
-                "WHEN 3 THEN 'Martes' " +
-                "WHEN 4 THEN 'Miércoles' " +
-                "WHEN 5 THEN 'Jueves' " +
-                "WHEN 6 THEN 'Viernes' " +
-                "WHEN 7 THEN 'Sábado' " +
-                "END AS dia, " +
-                "COUNT(*) AS total " +
-                "FROM ventas " +
-                "GROUP BY dia " +
-                "ORDER BY total DESC " +
-                "LIMIT 1";
-
         ps = cn.prepareStatement(sql);
         rs = ps.executeQuery();
-
-        if (rs.next()) {
+        if (rs.next() && rs.getString("dia") != null) {
             lblMejorDiaVentas.setText(rs.getString("dia"));
         } else {
             lblMejorDiaVentas.setText("Sin ventas");
         }
-
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar mejor día: " + e.getMessage()
-        );
+        System.out.println("Error al cargar mejor día de ventas: " + e.getMessage());
     }
 }
 private void cargarProductoMasVendido() {
-
+if (cn == null) return;
+    
+    // Suma las cantidades físicas de los artículos para ver cuál es el rey de la tienda
+    String sql = "SELECT dp.Producto, SUM(dp.Cantidad) AS total_vendido "
+               + "FROM detalle_pedidos dp "
+               + "INNER JOIN pedidos p ON dp.Id_Pedido = p.Id_Pedido "
+               + "WHERE p.Estado = 'ACEPTADO' "
+               + "GROUP BY dp.Producto "
+               + "ORDER BY total_vendido DESC LIMIT 1";
     try {
-        String sql =
-                "SELECT " +
-                "p.Nombre AS producto, " +
-                "SUM(dv.Cantidad) AS total_vendido " +
-                "FROM detalle_ventas dv " +
-                "INNER JOIN productos p ON dv.Id_Producto = p.Id_Productos " +
-                "GROUP BY p.Id_Productos, p.Nombre " +
-                "ORDER BY total_vendido DESC " +
-                "LIMIT 1";
-
         ps = cn.prepareStatement(sql);
         rs = ps.executeQuery();
-
         if (rs.next()) {
-            lblProductoMasVendido.setText(rs.getString("producto"));
+            lblProductoMasVendido.setText(rs.getString("Producto"));
         } else {
             lblProductoMasVendido.setText("Sin ventas");
         }
-
     } catch (Exception e) {
-        JOptionPane.showMessageDialog(
-                this,
-                "Error al cargar producto más vendido: " + e.getMessage()
-        );
+        System.out.println("Error al cargar producto más vendido: " + e.getMessage());
     }
 }
     /**
