@@ -23,6 +23,9 @@ private ResultSet rs;
      */
     public VentanaAdministrativoB() {
         initComponents();
+        bloquearTabla(tblRendimientoVendedores);
+    bloquearTabla(tblVendedoresMes);
+    
         ConexionMySQL conexion = new ConexionMySQL();
         cn = conexion.Conectar();
         
@@ -36,6 +39,29 @@ private ResultSet rs;
         cargarMejorDiaVentas();
         cargarProductoMasVendido();
     }
+    private void bloquearTabla(javax.swing.JTable tabla) {
+
+    tabla.setDefaultEditor(Object.class, null);
+
+    tabla.setCellSelectionEnabled(false);
+    tabla.setRowSelectionAllowed(true);
+
+    tabla.getTableHeader().setReorderingAllowed(false);
+
+    tabla.setSelectionMode(
+            javax.swing.ListSelectionModel.SINGLE_SELECTION
+    );
+
+    tabla.getInputMap().put(
+            javax.swing.KeyStroke.getKeyStroke("DELETE"),
+            "none"
+    );
+
+    tabla.getInputMap().put(
+            javax.swing.KeyStroke.getKeyStroke("BACK_SPACE"),
+            "none"
+    );
+}
 private void cargarResumenAdministrativo() {
 if (cn == null) return;
     try {
@@ -62,7 +88,12 @@ if (cn == null) return;
     }
 }
 private void cargarRendimientoVendedores() {
-DefaultTableModel modelo = new DefaultTableModel();
+DefaultTableModel modelo = new DefaultTableModel() {
+    @Override
+    public boolean isCellEditable(int row, int column) {
+        return false;
+    }
+};
     modelo.addColumn("Vendedor");
     modelo.addColumn("Estado");
     modelo.addColumn("Ventas");
@@ -313,9 +344,16 @@ if (cn == null) return;
                 "Vendedor", "Estado", "Ventas", "Productos", "Ingresos"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Float.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];

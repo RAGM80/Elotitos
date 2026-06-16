@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package versionbeta;
-import intento.VentanaRecuperar;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,30 +23,66 @@ boolean passVisible = false;
         initComponents();
     }
     public VentanaLoginB(MyDesktopB principal) {
-        this.jefe = principal;
-        initComponents();
-        
-        txtUsuario.addFocusListener(new java.awt.event.FocusAdapter() {
-            @Override
-            public void focusGained(java.awt.event.FocusEvent evt) {
-                if (txtUsuario.getText().equals("ingresa tu usuario")) {
-                    txtUsuario.setText("");
-                    txtUsuario.setForeground(new java.awt.Color(0, 0, 0)); 
-                }
-            }
+    this.jefe = principal;
+    initComponents();
 
-            @Override
-            public void focusLost(java.awt.event.FocusEvent evt) {
-                if (txtUsuario.getText().isEmpty()) {
-                    txtUsuario.setForeground(new java.awt.Color(153, 153, 153)); 
-                    txtUsuario.setText("ingresa tu usuario");
-                }
+    inicializarPlaceholders();
+
+    javax.swing.SwingUtilities.invokeLater(() -> {
+        panPrincipal.requestFocusInWindow();
+    });
+}
+    private void inicializarPlaceholders() {
+
+    txtUsuario.setText("Usuario");
+    txtUsuario.setForeground(new java.awt.Color(153, 153, 153));
+
+    pwdContraseña1.setText("Contraseña");
+    pwdContraseña1.setForeground(new java.awt.Color(153, 153, 153));
+    pwdContraseña1.setEchoChar((char) 0);
+
+    txtUsuario.addFocusListener(new java.awt.event.FocusAdapter() {
+        @Override
+        public void focusGained(java.awt.event.FocusEvent evt) {
+            if (txtUsuario.getText().equals("Usuario")) {
+                txtUsuario.setText("");
+                txtUsuario.setForeground(java.awt.Color.BLACK);
             }
-        });
-        
-        panPrincipal.requestFocus();
-    }
-    
+        }
+
+        @Override
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            if (txtUsuario.getText().trim().isEmpty()) {
+                txtUsuario.setText("Usuario");
+                txtUsuario.setForeground(new java.awt.Color(153, 153, 153));
+            }
+        }
+    });
+
+    pwdContraseña1.addFocusListener(new java.awt.event.FocusAdapter() {
+        @Override
+        public void focusGained(java.awt.event.FocusEvent evt) {
+            String pass = new String(pwdContraseña1.getPassword());
+
+            if (pass.equals("Contraseña")) {
+                pwdContraseña1.setText("");
+                pwdContraseña1.setForeground(java.awt.Color.BLACK);
+                pwdContraseña1.setEchoChar('•');
+            }
+        }
+
+        @Override
+        public void focusLost(java.awt.event.FocusEvent evt) {
+            String pass = new String(pwdContraseña1.getPassword()).trim();
+
+            if (pass.isEmpty()) {
+                pwdContraseña1.setText("Contraseña");
+                pwdContraseña1.setForeground(new java.awt.Color(153, 153, 153));
+                pwdContraseña1.setEchoChar((char) 0);
+            }
+        }
+    });
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -182,7 +218,27 @@ boolean passVisible = false;
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+private void abrirVentanaInterna(javax.swing.JInternalFrame ventana) {
 
+    if (this.jefe != null) {
+
+        this.jefe.jDesktopPane1.add(ventana);
+        ventana.setVisible(true);
+
+        int x = (this.jefe.jDesktopPane1.getWidth() - ventana.getWidth()) / 2;
+        int y = (this.jefe.jDesktopPane1.getHeight() - ventana.getHeight()) / 2;
+
+        ventana.setLocation(x, y);
+
+        this.jefe.jDesktopPane1.revalidate();
+        this.jefe.jDesktopPane1.repaint();
+
+    } else {
+        ventana.setVisible(true);
+    }
+
+    this.dispose();
+}
     private void btnCrearCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearCuentaActionPerformed
     CrearCuentaB ventanaRegistro = new CrearCuentaB(this.jefe);
         if (this.jefe != null) {
@@ -198,95 +254,158 @@ boolean passVisible = false;
 
     private void btnIniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnIniciarSesionActionPerformed
    String userText = txtUsuario.getText().trim();
-        String passText = pwdContraseña1.getText().trim();
-        
-        if (userText.isEmpty() || userText.equals("ingresa tu usuario") || 
-            passText.isEmpty() || passText.equals("ingresa tu contraseña")) {
-            JOptionPane.showMessageDialog(this, "Por favor, ingresa tus datos de acceso.");
-            return;
-        }
-        
-        ConexionMySQL mysql = new ConexionMySQL();
-        Connection con = mysql.Conectar();
-        if (con == null) {
-            JOptionPane.showMessageDialog(this, "No se pudo establecer comunicación con el servidor.", "Error de red", JOptionPane.ERROR_MESSAGE);
-            return; 
-        }
-        String sql = "SELECT Id_Usuario, Estado, Rol FROM usuarios WHERE Usuario = ? AND Contrasena = ?";
-        
-        try (PreparedStatement pst = con.prepareStatement(sql)) {
-            pst.setString(1, userText);
-            pst.setString(2, passText);
-            
-            try (ResultSet rs = pst.executeQuery()) {
-                if (rs.next()) {
-                    int idVendedor = rs.getInt("Id_Usuario");
-                    String estado = rs.getString("Estado");
-                    String rol = rs.getString("Rol"); 
-                    
-                    if (estado.equalsIgnoreCase("Activo")) {
-                        if (rol.equalsIgnoreCase("Administrador")) {
-                            JOptionPane.showMessageDialog(this, "¡Bienvenido Administrador, " + userText + "!");
-                            versionbeta.VentanaAdministrativoB admin = new versionbeta.VentanaAdministrativoB();
-                            
-                            if (this.jefe != null) {
-                                this.jefe.jDesktopPane1.add(admin); 
-                                admin.setVisible(true);
-                                int x = (this.jefe.jDesktopPane1.getWidth() - admin.getWidth()) / 2;
-                                int y = (this.jefe.jDesktopPane1.getHeight() - admin.getHeight()) / 2;
-                                admin.setLocation(x, y);
-                            } else {
-                                admin.setVisible(true);
-                            }
-                        } else if (rol.equalsIgnoreCase("Vendedor")) {
-                            JOptionPane.showMessageDialog(this, "¡Bienvenido, " + userText + "!");
-                            versionbeta.VentanaVentasB ventas = new versionbeta.VentanaVentasB(idVendedor);
-                            
-                            if (this.jefe != null) {
-                                this.jefe.jDesktopPane1.add(ventas); 
-                                ventas.setVisible(true);
-                                int x = (this.jefe.jDesktopPane1.getWidth() - ventas.getWidth()) / 2;
-                                int y = (this.jefe.jDesktopPane1.getHeight() - ventas.getHeight()) / 2;
-                                ventas.setLocation(x, y);
-                            } else {
-                                ventas.setVisible(true);
-                            }
-                        } else if (rol.equalsIgnoreCase("Cliente")) {
-                            JOptionPane.showMessageDialog(this, "¡Bienvenido, " + userText + "!");
-                            versionbeta.VentanaProductosB tienda = new versionbeta.VentanaProductosB(idVendedor);
-                            
-                            if (this.jefe != null) {
-                                this.jefe.jDesktopPane1.add(tienda); 
-                                tienda.setVisible(true);
-                                int x = (this.jefe.jDesktopPane1.getWidth() - tienda.getWidth()) / 2;
-                                int y = (this.jefe.jDesktopPane1.getHeight() - tienda.getHeight()) / 2;
-                                tienda.setLocation(x, y);
-                            } else {
-                                tienda.setVisible(true);
-                            }
-                        }
-                        if (this.jefe != null) {
-                            this.jefe.jDesktopPane1.revalidate();
-                            this.jefe.jDesktopPane1.repaint();
-                        }
-                        this.dispose(); 
-                        
-                    } else {
-                        JOptionPane.showMessageDialog(this, "Esta cuenta se encuentra temporalmente inactiva.", "Acceso denegado", JOptionPane.WARNING_MESSAGE);
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(this, "El usuario o la contraseña no coinciden.", "Datos incorrectos", JOptionPane.ERROR_MESSAGE);
-                }
+    String passText = new String(pwdContraseña1.getPassword()).trim();
+if (userText.equals("Usuario")) {
+    userText = "";
+}
+
+if (passText.equals("Contraseña")) {
+    passText = "";
+}
+    if (userText.isEmpty() || userText.equalsIgnoreCase("ingresa tu usuario")) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa tu usuario.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        txtUsuario.requestFocus();
+        return;
+    }
+
+    if (passText.isEmpty()) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa tu contraseña.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        pwdContraseña1.requestFocus();
+        return;
+    }
+
+    ConexionMySQL mysql = new ConexionMySQL();
+    Connection con = mysql.Conectar();
+
+    if (con == null) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No se pudo conectar con la base de datos.",
+                "Error de conexión",
+                JOptionPane.ERROR_MESSAGE
+        );
+        return;
+    }
+
+    String sql =
+            "SELECT Id_Usuario, Estado, Rol " +
+            "FROM usuarios " +
+            "WHERE Usuario = ? AND Contrasena = ?";
+
+    try (PreparedStatement pst = con.prepareStatement(sql)) {
+
+        pst.setString(1, userText);
+        pst.setString(2, passText);
+
+        try (ResultSet rs = pst.executeQuery()) {
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Usuario o contraseña incorrectos.",
+                        "Acceso denegado",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
             }
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Ocurrió un problema al procesar tu solicitud. Inténtalo más tarde.", "Error de sistema", JOptionPane.ERROR_MESSAGE);
-        } finally {
-            try {
-                if (con != null) con.close(); 
-            } catch (SQLException ex) {
-                System.out.println("Error al cerrar conexión: " + ex.getMessage());
+
+            int idUsuario = rs.getInt("Id_Usuario");
+            String estado = rs.getString("Estado");
+            String rol = rs.getString("Rol");
+
+            if (estado == null || !estado.equalsIgnoreCase("Activo")) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Esta cuenta se encuentra inactiva.",
+                        "Acceso denegado",
+                        JOptionPane.WARNING_MESSAGE
+                );
+                return;
             }
+
+            if (rol == null || rol.trim().isEmpty()) {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "El usuario no tiene un rol asignado.",
+                        "Error de rol",
+                        JOptionPane.ERROR_MESSAGE
+                );
+                return;
+            }
+
+            rol = rol.trim();
+
+            if (rol.equalsIgnoreCase("Administrador")) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Bienvenido administrador: " + userText
+                );
+
+                VentanaAdministrativoB admin = new VentanaAdministrativoB();
+                abrirVentanaInterna(admin);
+
+            } else if (rol.equalsIgnoreCase("Vendedor")) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Bienvenido vendedor: " + userText
+                );
+
+                VentanaVentasB ventas = new VentanaVentasB(idUsuario);
+                abrirVentanaInterna(ventas);
+
+            } else if (rol.equalsIgnoreCase("Cliente")) {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Bienvenido cliente: " + userText
+                );
+
+                VentanaProductosB tienda = new VentanaProductosB(idUsuario);
+                abrirVentanaInterna(tienda);
+
+            } else {
+
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Rol no reconocido: " + rol,
+                        "Error de rol",
+                        JOptionPane.ERROR_MESSAGE
+                );
+            }
+
         }
+
+    } catch (Exception e) {
+
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al iniciar sesión: " + e.getMessage(),
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+
+    } finally {
+
+        try {
+            if (con != null) {
+                con.close();
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cerrar conexión: " + e.getMessage());
+        }
+    }
     }//GEN-LAST:event_btnIniciarSesionActionPerformed
 
     private void txtUsuarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtUsuarioActionPerformed

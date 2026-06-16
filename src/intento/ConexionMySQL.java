@@ -9,7 +9,7 @@ public class ConexionMySQL {
     private final String db = "eloteria_db";
     private final String url = "jdbc:mysql://localhost:3306/" + db + "?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true";
     private final String usuario = "root";
-    private final String pass = "";
+    private final String pass = "12345";
 
     public Connection Conectar() {
         Connection enlace = null;

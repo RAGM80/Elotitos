@@ -5,7 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import javax.swing.JOptionPane;
-
+import java.sql.ResultSet;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -63,11 +63,95 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
                 }
                 return this;
             }
+            
         });
         cmbRol.setSelectedIndex(-1);
-        pnlFondo.requestFocus();
+
+        pwdContrasena.setText("Contraseña");
+        pwdContrasena.setForeground(new java.awt.Color(153, 153, 153));
+        pwdContrasena.setEchoChar((char) 0);
+
+        pwdConfirmarContrasena.setText("Confirmar contraseña");
+        pwdConfirmarContrasena.setForeground(new java.awt.Color(153, 153, 153));
+        pwdConfirmarContrasena.setEchoChar((char) 0);
+
+        pwdContrasena.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                String pass = new String(pwdContrasena.getPassword());
+
+                if (pass.equals("Contraseña")) {
+                    pwdContrasena.setText("");
+                    pwdContrasena.setForeground(java.awt.Color.BLACK);
+                    pwdContrasena.setEchoChar('•');
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                String pass = new String(pwdContrasena.getPassword()).trim();
+
+                if (pass.isEmpty()) {
+                    pwdContrasena.setText("Contraseña");
+                    pwdContrasena.setForeground(new java.awt.Color(153, 153, 153));
+                    pwdContrasena.setEchoChar((char) 0);
+                }
+            }
+        });
+
+        pwdConfirmarContrasena.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                String pass = new String(pwdConfirmarContrasena.getPassword());
+
+                if (pass.equals("Confirmar contraseña")) {
+                    pwdConfirmarContrasena.setText("");
+                    pwdConfirmarContrasena.setForeground(java.awt.Color.BLACK);
+                    pwdConfirmarContrasena.setEchoChar('•');
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                String pass = new String(pwdConfirmarContrasena.getPassword()).trim();
+
+                if (pass.isEmpty()) {
+                    pwdConfirmarContrasena.setText("Confirmar contraseña");
+                    pwdConfirmarContrasena.setForeground(new java.awt.Color(153, 153, 153));
+                    pwdConfirmarContrasena.setEchoChar((char) 0);
+                }
+            }
+        });
+
+        javax.swing.SwingUtilities.invokeLater(() -> {
+            pnlFondo.requestFocusInWindow();
+        });
+        
+    }
+private void abrirLogin() {
+
+    VentanaLoginB login = new VentanaLoginB(this.jefe);
+
+    if (this.jefe != null) {
+
+        this.jefe.jDesktopPane1.add(login);
+        login.setSize(400, 485);
+        login.setVisible(true);
+
+        int x = (this.jefe.jDesktopPane1.getWidth() - login.getWidth()) / 2;
+        int y = (this.jefe.jDesktopPane1.getHeight() - login.getHeight()) / 2;
+
+        login.setLocation(x, y);
+
+        this.jefe.jDesktopPane1.revalidate();
+        this.jefe.jDesktopPane1.repaint();
+
+    } else {
+        login.setVisible(true);
     }
 
+    this.dispose();
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -150,11 +234,9 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
         cmbRol.addActionListener(this::cmbRolActionPerformed);
 
         pwdContrasena.setBackground(new java.awt.Color(204, 204, 204));
-        pwdContrasena.setText("dsassasafassaf");
         pwdContrasena.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
 
         pwdConfirmarContrasena.setBackground(new java.awt.Color(204, 204, 204));
-        pwdConfirmarContrasena.setText("jPasswordField2");
         pwdConfirmarContrasena.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         pwdConfirmarContrasena.addActionListener(this::pwdConfirmarContrasenaActionPerformed);
 
@@ -288,77 +370,221 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
     void insertarDatos() {
-        ConexionMySQL cmysql = new ConexionMySQL();
-        Connection conec = cmysql.Conectar();
-        
-        if (conec == null) {
-            return;
-        }
         String nombreReal = this.txtNombre.getText().trim();
-        String apellidoReal = this.txtApellido.getText().trim();
-        String user = this.txtUsuario.getText().trim();
-        String pass = new String(this.pwdContrasena.getPassword()).trim();
-        String confirmPass = new String(this.pwdConfirmarContrasena.getPassword()).trim();
-        String pregunta = this.txtPregunta.getText().trim();
-        String respuesta = this.txtRespuesta.getText().trim();
-        if (this.cmbRol.getSelectedIndex() == -1) {
-          JOptionPane.showMessageDialog(this, "Por favor, selecciona un Rol.");
-          return;
-        }
-        String rol = this.cmbRol.getSelectedItem().toString();
-        if (user.isEmpty() || user.equals("Usuario") || pass.isEmpty() || 
-            pregunta.isEmpty() || pregunta.equals("Ingresa una pregunta") || 
-            respuesta.isEmpty() || respuesta.equals("Ingresa la respuesta a tu pregunta")) {
-            JOptionPane.showMessageDialog(this, "Por favor, llena todos los campos obligatorios.");
-            return;
-        }
-        
-        if (!pass.equals(confirmPass)) {
-            JOptionPane.showMessageDialog(this, "Las contraseñas no coinciden.");
-            return;
-        }
-        
-        
-        String senSQL = "INSERT INTO usuarios(Usuario, Contrasena, Rol, Estado, Pregunta_Seguridad, Respuesta_Seguridad, Nombre, Apellido) VALUES (?, ?, ?, 'Activo', ?, ?, ?, ?)";
-        String comprobacion = "Se han guardado tus datos correctamente";
-        
-        try {
-            PreparedStatement ps = conec.prepareStatement(senSQL);
-            ps.setString(1, user);
-            ps.setString(2, pass);
-            ps.setString(3, rol);
-            ps.setString(4, pregunta);
-            ps.setString(5, respuesta);
-            ps.setString(6, nombreReal);
-            ps.setString(7, apellidoReal);
-            
-            int n = ps.executeUpdate();
-            if (n > 0) {
-                JOptionPane.showOptionDialog(this, comprobacion, "MySQL INFORMATION", JOptionPane.INFORMATION_MESSAGE,
-                        JOptionPane.INFORMATION_MESSAGE, null, new Object[]{"ok"}, "ok");
+    String apellidoReal = this.txtApellido.getText().trim();
+    String user = this.txtUsuario.getText().trim();
+    String pass = new String(this.pwdContrasena.getPassword()).trim();
+    String confirmPass = new String(this.pwdConfirmarContrasena.getPassword()).trim();
+    if (pass.equals("Contraseña")) {
+    pass = "";
+}
 
-                VentanaLoginB login = new VentanaLoginB(this.jefe);
-                if (this.jefe != null) {
-                    this.jefe.jDesktopPane1.add(login);
-                    login.setSize(400, 485); 
-                    login.setVisible(true);
-                    int x = (this.jefe.jDesktopPane1.getWidth() - login.getWidth()) / 2;
-                    int y = (this.jefe.jDesktopPane1.getHeight() - login.getHeight()) / 2;
-                    login.setLocation(x, y);
-                } else {
-                    login.setVisible(true);
-                }
-                this.dispose(); 
-            }
-        } catch (SQLException ex) {
-            JOptionPane.showMessageDialog(null, "Error al insertar: " + ex.getMessage());
-        } finally {
-            try {
-                if (conec != null) conec.close();
-            } catch (SQLException e) {
-                System.out.println("Error al cerrar: " + e.getMessage());
-            }
+if (confirmPass.equals("Confirmar contraseña")) {
+    confirmPass = "";
+}
+    String pregunta = this.txtPregunta.getText().trim();
+    String respuesta = this.txtRespuesta.getText().trim();
+
+    if (nombreReal.isEmpty() || nombreReal.equalsIgnoreCase("Nombre")) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa tu nombre.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        txtNombre.requestFocus();
+        return;
+    }
+
+    if (apellidoReal.isEmpty() || apellidoReal.equalsIgnoreCase("Apellidos")) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa tus apellidos.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        txtApellido.requestFocus();
+        return;
+    }
+
+    if (this.cmbRol.getSelectedIndex() == -1) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Selecciona un rol.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        cmbRol.requestFocus();
+        return;
+    }
+
+    String rol = this.cmbRol.getSelectedItem().toString();
+
+    if (user.isEmpty() || user.equalsIgnoreCase("Usuario")) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa un usuario.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        txtUsuario.requestFocus();
+        return;
+    }
+
+    if (user.contains(" ")) {
+        JOptionPane.showMessageDialog(
+                this,
+                "El usuario no debe contener espacios.",
+                "Usuario inválido",
+                JOptionPane.WARNING_MESSAGE
+        );
+        txtUsuario.requestFocus();
+        return;
+    }
+
+    if (pass.isEmpty()) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa una contraseña.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        pwdContrasena.requestFocus();
+        return;
+    }
+
+    if (pass.length() < 4) {
+        JOptionPane.showMessageDialog(
+                this,
+                "La contraseña debe tener al menos 4 caracteres.",
+                "Contraseña débil",
+                JOptionPane.WARNING_MESSAGE
+        );
+        pwdContrasena.requestFocus();
+        return;
+    }
+
+    if (confirmPass.isEmpty()) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Confirma tu contraseña.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        pwdConfirmarContrasena.requestFocus();
+        return;
+    }
+
+    if (!pass.equals(confirmPass)) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Las contraseñas no coinciden.",
+                "Error",
+                JOptionPane.ERROR_MESSAGE
+        );
+        pwdConfirmarContrasena.requestFocus();
+        return;
+    }
+
+    if (pregunta.isEmpty() || pregunta.equalsIgnoreCase("Ingresa una pregunta")) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa una pregunta de seguridad.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        txtPregunta.requestFocus();
+        return;
+    }
+
+    if (respuesta.isEmpty() || respuesta.equalsIgnoreCase("Ingresa la respuesta a tu pregunta")) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Ingresa la respuesta de seguridad.",
+                "Dato faltante",
+                JOptionPane.WARNING_MESSAGE
+        );
+        txtRespuesta.requestFocus();
+        return;
+    }
+
+    ConexionMySQL cmysql = new ConexionMySQL();
+    Connection conec = cmysql.Conectar();
+
+    if (conec == null) {
+        JOptionPane.showMessageDialog(
+                this,
+                "No se pudo conectar a la base de datos.",
+                "Error de conexión",
+                JOptionPane.ERROR_MESSAGE
+        );
+        return;
+    }
+
+    try {
+        String sqlExiste =
+                "SELECT COUNT(*) AS total " +
+                "FROM usuarios " +
+                "WHERE Usuario = ?";
+
+        PreparedStatement psExiste = conec.prepareStatement(sqlExiste);
+        psExiste.setString(1, user);
+
+        ResultSet rsExiste = psExiste.executeQuery();
+
+        if (rsExiste.next() && rsExiste.getInt("total") > 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Ese usuario ya existe. Elige otro.",
+                    "Usuario repetido",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            txtUsuario.requestFocus();
+            return;
         }
+
+        String senSQL =
+                "INSERT INTO usuarios " +
+                "(Usuario, Contrasena, Rol, Estado, Pregunta_Seguridad, Respuesta_Seguridad, Nombre, Apellido) " +
+                "VALUES (?, ?, ?, 'Activo', ?, ?, ?, ?)";
+
+        PreparedStatement ps = conec.prepareStatement(senSQL);
+
+        ps.setString(1, user);
+        ps.setString(2, pass);
+        ps.setString(3, rol);
+        ps.setString(4, pregunta);
+        ps.setString(5, respuesta);
+        ps.setString(6, nombreReal);
+        ps.setString(7, apellidoReal);
+
+        int n = ps.executeUpdate();
+
+        if (n > 0) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Cuenta creada correctamente."
+            );
+
+            abrirLogin();
+        }
+
+    } catch (SQLException ex) {
+        JOptionPane.showMessageDialog(
+                this,
+                "Error al insertar: " + ex.getMessage(),
+                "Error SQL",
+                JOptionPane.ERROR_MESSAGE
+        );
+    } finally {
+        try {
+            if (conec != null) {
+                conec.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error al cerrar: " + e.getMessage());
+        }
+    }
     }
     private void pwdConfirmarContrasenaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pwdConfirmarContrasenaActionPerformed
         // TODO add your handling code here:
@@ -479,23 +705,7 @@ public class CrearCuentaB extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnGuardarActionPerformed
 
     private void btnRegresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRegresarActionPerformed
-    txtUsuario.setText(""); 
-    pwdContrasena.setText(""); 
-    txtUsuario.setText("ingresa tu usuario");
-    txtUsuario.setForeground(new java.awt.Color(153, 153, 153)); 
-    javax.swing.JDesktopPane desktop = this.getDesktopPane();
-    if (desktop != null) {
-        java.awt.Window win = javax.swing.SwingUtilities.getWindowAncestor(this);
-        MyDesktopB principal = (win instanceof MyDesktopB) ? (MyDesktopB) win : null;
-        VentanaLoginB login = new VentanaLoginB(principal);
-        desktop.add(login);
-        login.setVisible(true);
-        login.setSize(400, 485);
-        int x = (desktop.getWidth() - login.getWidth()) / 2;
-        int y = (desktop.getHeight() - login.getHeight()) / 2;
-        login.setLocation(x, y);
-    }
-    this.dispose();
+   abrirLogin();
     }//GEN-LAST:event_btnRegresarActionPerformed
 
     /**

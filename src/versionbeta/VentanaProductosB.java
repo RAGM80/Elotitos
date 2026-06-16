@@ -4,7 +4,7 @@
  */
 package versionbeta;
 
-import intento.*;
+
 import javax.swing.JOptionPane;
 
 /**
@@ -14,22 +14,54 @@ import javax.swing.JOptionPane;
 public class VentanaProductosB extends javax.swing.JInternalFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaProductosB.class.getName());
-
+ private int idUsuarioActual;
     /**
      * Creates new form VentanaProductos
      */
-    public VentanaProductosB() {
-        initComponents();
-    }
-    private int idUsuarioActual;
-   public VentanaProductosB(int idUsuario) {
-        this.idUsuarioActual = idUsuario;
-        initComponents();
-        btnCarrito.addActionListener(this::btnCarritoActionPerformed);
-        tblCompras.setCellSelectionEnabled(false);
-        tblCompras.setRowSelectionAllowed(true);
-        cargarTablaProductos();
-    }
+   public VentanaProductosB() {
+    initComponents();
+
+    this.idUsuarioActual = 0;
+
+    prepararVentana();
+}
+
+public VentanaProductosB(int idUsuario) {
+    initComponents();
+
+    this.idUsuarioActual = idUsuario;
+
+    prepararVentana();
+}
+private void prepararVentana() {
+
+    marcarBotonActual();
+
+    tblCompras.setCellSelectionEnabled(false);
+    tblCompras.setRowSelectionAllowed(true);
+    tblCompras.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+
+    cargarTablaProductos();
+}
+private void botonActivo(javax.swing.JButton boton) {
+    boton.setBackground(new java.awt.Color(36, 107, 255));
+    boton.setForeground(java.awt.Color.WHITE);
+    boton.setOpaque(true);
+    boton.setBorderPainted(false);
+}
+
+private void botonInactivo(javax.swing.JButton boton) {
+    boton.setBackground(new java.awt.Color(204, 204, 204));
+    boton.setForeground(java.awt.Color.BLACK);
+    boton.setOpaque(true);
+    boton.setBorderPainted(false);
+}
+
+private void marcarBotonActual() {
+    botonActivo(btnProductos);
+    botonInactivo(btnCarrito);
+    botonInactivo(btnPedidos);
+}
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
