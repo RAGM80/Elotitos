@@ -86,11 +86,9 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
         pnlProductosVendidos = new javax.swing.JPanel();
         lblProductosTitulo = new javax.swing.JLabel();
         lblProductosVendidos = new javax.swing.JLabel();
-        lblIconoProductos = new javax.swing.JLabel();
         pnlTransacciones = new javax.swing.JPanel();
         lblTransaccionesTitulo = new javax.swing.JLabel();
         lblTransacciones = new javax.swing.JLabel();
-        lblIconoTransacciones = new javax.swing.JLabel();
         btnRegistroProductos = new javax.swing.JButton();
         btnHistorialVentas = new javax.swing.JButton();
         btnAceptarPedido = new javax.swing.JButton();
@@ -135,8 +133,6 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
 
         lblProductosVendidos.setText("15");
 
-        lblIconoProductos.setText("📦");
-
         javax.swing.GroupLayout pnlProductosVendidosLayout = new javax.swing.GroupLayout(pnlProductosVendidos);
         pnlProductosVendidos.setLayout(pnlProductosVendidosLayout);
         pnlProductosVendidosLayout.setHorizontalGroup(
@@ -146,9 +142,7 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
                 .addGroup(pnlProductosVendidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(pnlProductosVendidosLayout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(lblProductosVendidos, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblIconoProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(lblProductosVendidos, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblProductosTitulo))
                 .addContainerGap(27, Short.MAX_VALUE))
         );
@@ -157,17 +151,13 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
             .addGroup(pnlProductosVendidosLayout.createSequentialGroup()
                 .addComponent(lblProductosTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlProductosVendidosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblProductosVendidos)
-                    .addComponent(lblIconoProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lblProductosVendidos)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
         lblTransaccionesTitulo.setText("Transacciones");
 
         lblTransacciones.setText("2");
-
-        lblIconoTransacciones.setText("💸");
 
         javax.swing.GroupLayout pnlTransaccionesLayout = new javax.swing.GroupLayout(pnlTransacciones);
         pnlTransacciones.setLayout(pnlTransaccionesLayout);
@@ -177,10 +167,7 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addGroup(pnlTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblTransaccionesTitulo)
-                    .addGroup(pnlTransaccionesLayout.createSequentialGroup()
-                        .addComponent(lblTransacciones, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(lblIconoTransacciones)))
+                    .addComponent(lblTransacciones, javax.swing.GroupLayout.PREFERRED_SIZE, 31, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(109, Short.MAX_VALUE))
         );
         pnlTransaccionesLayout.setVerticalGroup(
@@ -189,9 +176,7 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
                 .addContainerGap()
                 .addComponent(lblTransaccionesTitulo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(pnlTransaccionesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblTransacciones)
-                    .addComponent(lblIconoTransacciones))
+                .addComponent(lblTransacciones)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -434,8 +419,6 @@ public class VentanaHistorialVentasB extends javax.swing.JInternalFrame {
     private javax.swing.JButton btnRegistroProductos;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTable jTable1;
-    private javax.swing.JLabel lblIconoProductos;
-    private javax.swing.JLabel lblIconoTransacciones;
     private javax.swing.JLabel lblProductosTitulo;
     private javax.swing.JLabel lblProductosVendidos;
     private javax.swing.JLabel lblTitulo;

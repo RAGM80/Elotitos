@@ -8,6 +8,11 @@ package versionbeta;
  *
  * @author Limon
  */
+/*
+ * esta es la clase principal del sistema
+ * funciona como contenedor,dentro del JDesktopPane se van abriendo las
+ * pantallas internas como login, ventas, carrito y administración.
+ */
 public class MyDesktopB extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MyDesktopB.class.getName());
@@ -15,6 +20,7 @@ public class MyDesktopB extends javax.swing.JFrame {
     /**
      * Creates new form MyDesktop
      */
+    // cuando se inica el sistema se abre la ventana para que se muestre el login
     public MyDesktopB() {
    initComponents();
         this.setExtendedState(MAXIMIZED_BOTH);
@@ -25,6 +31,7 @@ public class MyDesktopB extends javax.swing.JFrame {
         jDesktopPane1.add(loginInterno);
         loginInterno.setSize(400, 485); 
         loginInterno.setVisible(true); 
+     //el timer solo espera un momento para centrar bien el login ya con tamaños calculados    
         javax.swing.Timer timer = new javax.swing.Timer(80, new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent e) {
@@ -36,6 +43,7 @@ public class MyDesktopB extends javax.swing.JFrame {
         timer.setRepeats(false);
         timer.start();
     }
+    //cierra cualquier ventana interna abierta y vuelve a mostrar el login
     public void mostrarLogin() {
     for (javax.swing.JInternalFrame frame : jDesktopPane1.getAllFrames()) {
         frame.dispose();

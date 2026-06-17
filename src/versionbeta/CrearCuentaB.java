@@ -16,15 +16,18 @@ import java.sql.ResultSet;
  *
  * @author rafhi
  */
-
+/*
+ * esta es la ventana para crear ususarios nuevos
+ * desde aquí se capturan datos personales, rol, contraseña y la pregunta
+ * de seguridad que después sirve para recuperar la cuenta
+ */
 public class CrearCuentaB extends javax.swing.JInternalFrame {
-  boolean passVisible = false; 
+ //aqui se controla si la contraseña se ve o queda oculta con puntos
+    boolean passVisible = false; 
    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(CrearCuentaB.class.getName());
-
-    /**
-     * Creates new form CrearCuentaB
-     */
-    private MyDesktopB jefe;
+// este es el JFrame principal, con esto puedo abrir otras ventanas dentro del mismo escritorio
+     private MyDesktopB jefe;
+ // Constructor usado cuando se abre la ventana sin pasar el escritorio principal    
     public CrearCuentaB() {
     this.jefe = null;
         initComponents();
